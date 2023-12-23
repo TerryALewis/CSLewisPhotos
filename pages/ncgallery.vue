@@ -1,17 +1,19 @@
 <template>
   <div class="bg-gray-200 h-screen">
     <div class="flex justify-center">
-      <h1 class="text-black text-md font-semibold">
+      <NuxtLink to="/" class="text-black text-md font-semibold">Caleb S. Lewis Photography</NuxtLink>
+      <!-- <h1 class="text-black text-md font-semibold">
+        
         Caleb S. Lewis Photography
-      </h1>
+      </h1> -->
     </div>
-    <div class="py-1 flex justify-center">
+    <!-- <div class="py-1 flex justify-center">
       <img
         src="/assets/images/NC-Map.png"
         alt="North Carolina Map"
         class="object-cover object-center rounded-lg shadow-lg text-white bg-transparent w-24 h-10"
       />
-    </div>
+    </div> -->
     <div class="py-2 border border-b-2 border-b-gray-400 flex justify-center">
       <h2 class="text-[#159243] text-5xl font-semibold">NC Photo Catalog</h2>
     </div>

@@ -1,9 +1,18 @@
 <template>
   <div class="flex h-screen items-center justify-center">
-    <h1 class="text-blue-500 text-2xl font-bold">Purchasing</h1>
-  </div>
-  <div>
-    <span> </span>
+    <div class="grid grid-rows-2 items-center">
+      <div class="flex justify-center">
+        <NuxtLink to="/" class="text-blue-500 text-2xl font-bold"
+          >Purchasing</NuxtLink
+        >
+        <!-- <h1 class="text-blue-500 text-2xl font-bold">Purchasing</h1> -->
+      </div>
+      <div class="flex justify-center">
+        <h4 class="text-[#159243] text-xl font-semibold">
+          (under development)
+        </h4>
+      </div>
+    </div>
   </div>
 </template>
 

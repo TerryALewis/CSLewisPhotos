@@ -46,10 +46,10 @@
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl lg:mx-0">
         <h2 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-          Caleb Lewis<br />Photography
+          Caleb S. Lewis<br />Photography
         </h2>
         <p class="mt-6 text-lg leading-8 text-white font-semibold">
-          Photographic work from Caleb Lewis. <br />
+          Photographic work from Caleb S. Lewis. <br />
           Featuring rural North Carolina and Texas scenery capturing the majesty
           of God's creation.
         </p>
@@ -64,7 +64,7 @@
           >
           <NuxtLink to="/about">About Caleb</NuxtLink>
         </div>
-        <dl
+        <!-- <dl
           class="mt-16 grid grid-cols-1 gap-8 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4"
         >
           <div class="container">
@@ -81,7 +81,7 @@
               </div>
             </NuxtLink>
           </div>
-        </dl>
+        </dl> -->
       </div>
     </div>
   </div>

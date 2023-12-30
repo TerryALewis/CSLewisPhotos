@@ -15,6 +15,7 @@ export default defineNuxtConfig({
       },
     ],
     'nuxt-icons',
+    'nuxt-headlessui',
   ],
   imports: {
     dirs: ['stores'],

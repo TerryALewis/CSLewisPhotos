@@ -58,30 +58,11 @@
         <div
           class="grid grid-cols-1 gap-x-8 gap-y-6 text-base font-semibold leading-7 text-white sm:grid-cols-2 md:flex lg:gap-x-10"
         >
-          <NuxtLink to="/ncgallery" class="pr-4">Gallery</NuxtLink>
-          <NuxtLink to="/purchasing" class="pr-4"
-            >Purchasing Photographs</NuxtLink
-          >
+          <NuxtLink to="/ncgallery" class="pr-4">NC Gallery</NuxtLink>
+          <NuxtLink to="/txgallery" class="pr-4">Texas Gallery</NuxtLink>
+          <NuxtLink to="/cart" class="pr-4">Your cart</NuxtLink>
           <NuxtLink to="/about">About Caleb</NuxtLink>
         </div>
-        <!-- <dl
-          class="mt-16 grid grid-cols-1 gap-8 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          <div class="container">
-            <NuxtLink to="/ncgallery">
-              <img
-                src="/assets/images/NC-Map.png"
-                alt="North Carolina Map"
-                class="object-cover object-center rounded-lg shadow-lg text-white bg-transparent w-48 h-20"
-              />
-              <div
-                class="position: absolute bg-transparent text-sm vertical-align: middle text-align: center left-0 top-0 justify-center items-center font-semibold text-white transition duration-300 ease-in-out"
-              >
-                <span class="text-black">North Carolina Gallery</span>
-              </div>
-            </NuxtLink>
-          </div>
-        </dl> -->
       </div>
     </div>
   </div>

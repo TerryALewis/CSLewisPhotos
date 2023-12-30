@@ -1,18 +1,3 @@
-<!--
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-      require('@tailwindcss/aspect-ratio'),
-    ],
-  }
-  ```
--->
 <template>
   <div class="bg-white">
     <!-- Mobile menu -->
@@ -68,7 +53,7 @@
                       <button
                         :class="[
                           selected
-                            ? 'border-indigo-600 text-indigo-600'
+                            ? 'border-[#159243] text-[#159243]'
                             : 'border-transparent text-gray-900',
                           'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium',
                         ]"
@@ -88,7 +73,7 @@
                       <div
                         v-for="item in category.featured"
                         :key="item.name"
-                        class="group relative text-sm"
+                        class="group relative text-xs"
                       >
                         <div
                           class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75"
@@ -101,7 +86,7 @@
                         </div>
                         <a
                           :href="item.href"
-                          class="mt-6 block font-medium text-gray-900"
+                          class="mt-1 mb-4 block font-medium text-gray-900"
                         >
                           <span
                             class="absolute inset-0 z-10"
@@ -109,80 +94,29 @@
                           />
                           {{ item.name }}
                         </a>
-                        <p aria-hidden="true" class="mt-1">Shop now</p>
+                        <!-- <p aria-hidden="true" class="mt-1">Shop now</p> -->
                       </div>
-                    </div>
-                    <div
-                      v-for="section in category.sections"
-                      :key="section.name"
-                    >
-                      <p
-                        :id="`${category.id}-${section.id}-heading-mobile`"
-                        class="font-medium text-gray-900"
-                      >
-                        {{ section.name }}
-                      </p>
-                      <ul
-                        role="list"
-                        :aria-labelledby="`${category.id}-${section.id}-heading-mobile`"
-                        class="mt-6 flex flex-col space-y-6"
-                      >
-                        <li
-                          v-for="item in section.items"
-                          :key="item.name"
-                          class="flow-root"
-                        >
-                          <a
-                            :href="item.href"
-                            class="-m-2 block p-2 text-gray-500"
-                            >{{ item.name }}</a
-                          >
-                        </li>
-                      </ul>
                     </div>
                   </TabPanel>
                 </TabPanels>
               </TabGroup>
 
               <div class="space-y-6 border-t border-gray-200 px-4 py-6">
-                <div
-                  v-for="page in navigation.pages"
-                  :key="page.name"
-                  class="flow-root"
-                >
-                  <a
-                    :href="page.href"
-                    class="-m-2 block p-2 font-medium text-gray-900"
-                    >{{ page.name }}</a
-                  >
-                </div>
-              </div>
-
-              <div class="space-y-6 border-t border-gray-200 px-4 py-6">
                 <div class="flow-root">
-                  <a href="#" class="-m-2 block p-2 font-medium text-gray-900"
+                  <a href="#" class="-m-2 block p-2 font-medium text-[#159243]"
                     >Sign in</a
                   >
                 </div>
                 <div class="flow-root">
-                  <a href="#" class="-m-2 block p-2 font-medium text-gray-900"
+                  <a href="#" class="-m-2 block p-2 font-medium text-[#159243]"
                     >Create account</a
                   >
                 </div>
-              </div>
-
-              <div class="border-t border-gray-200 px-4 py-6">
-                <a href="#" class="-m-2 flex items-center p-2">
-                  <img
-                    src="https://tailwindui.com/img/flags/flag-canada.svg"
-                    alt=""
-                    class="block h-auto w-5 flex-shrink-0"
-                  />
-                  <span class="ml-3 block text-base font-medium text-gray-900"
-                    >CAD</span
+                <div class="flow-root">
+                  <a href="/" class="-m-2 block p-2 font-medium text-[#159243]"
+                    >Home</a
                   >
-                  <span class="sr-only">, change currency</span>
-                </a>
+                </div>
               </div>
             </DialogPanel>
           </TransitionChild>
@@ -192,7 +126,7 @@
 
     <header class="relative bg-white">
       <p
-        class="flex h-10 items-center justify-center bg-indigo-600 px-4 text-sm font-medium text-white sm:px-6 lg:px-8"
+        class="flex h-10 items-center justify-center bg-[#159243] px-4 text-sm font-medium text-white sm:px-6 lg:px-8"
       >
         Get free delivery on orders over $100
       </p>
@@ -213,12 +147,7 @@
             <!-- Logo -->
             <div class="ml-4 flex lg:ml-0">
               <a href="#">
-                <span class="sr-only">Your Company</span>
-                <img
-                  class="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                  alt=""
-                />
+                <span class="sr-only">Caleb S. Lewis Photography</span>
               </a>
             </div>
 
@@ -235,7 +164,7 @@
                     <PopoverButton
                       :class="[
                         open
-                          ? 'border-indigo-600 text-indigo-600'
+                          ? 'border-[#159243] text-[#159243]'
                           : 'border-transparent text-gray-700 hover:text-gray-800',
                         'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out',
                       ]"
@@ -260,10 +189,10 @@
                         aria-hidden="true"
                       />
 
-                      <div class="relative bg-white">
-                        <div class="mx-auto max-w-7xl px-8">
+                      <div class="relative bg-white grid grid-cols-2">
+                        <div class="mx-auto max-w-7xl px-8 grid col-start-1">
                           <div class="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
-                            <div class="col-start-2 grid grid-cols-2 gap-x-8">
+                            <div class="col-start-1 grid grid-cols-2 gap-x-8">
                               <div
                                 v-for="item in category.featured"
                                 :key="item.name"
@@ -280,7 +209,7 @@
                                 </div>
                                 <a
                                   :href="item.href"
-                                  class="mt-6 block font-medium text-gray-900"
+                                  class="mt-2 mb-4 block font-medium text-gray-900"
                                 >
                                   <span
                                     class="absolute inset-0 z-10"
@@ -288,39 +217,6 @@
                                   />
                                   {{ item.name }}
                                 </a>
-                                <p aria-hidden="true" class="mt-1">Shop now</p>
-                              </div>
-                            </div>
-                            <div
-                              class="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm"
-                            >
-                              <div
-                                v-for="section in category.sections"
-                                :key="section.name"
-                              >
-                                <p
-                                  :id="`${section.name}-heading`"
-                                  class="font-medium text-gray-900"
-                                >
-                                  {{ section.name }}
-                                </p>
-                                <ul
-                                  role="list"
-                                  :aria-labelledby="`${section.name}-heading`"
-                                  class="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-                                >
-                                  <li
-                                    v-for="item in section.items"
-                                    :key="item.name"
-                                    class="flex"
-                                  >
-                                    <a
-                                      :href="item.href"
-                                      class="hover:text-gray-800"
-                                      >{{ item.name }}</a
-                                    >
-                                  </li>
-                                </ul>
                               </div>
                             </div>
                           </div>
@@ -334,7 +230,7 @@
                   v-for="page in navigation.pages"
                   :key="page.name"
                   :href="page.href"
-                  class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800"
+                  class="flex items-center text-sm font-medium text-[#159243] hover:text-[#159243]"
                   >{{ page.name }}</a
                 >
               </div>
@@ -355,21 +251,12 @@
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
                   >Create account</a
                 >
-              </div>
-
-              <div class="hidden lg:ml-8 lg:flex">
+                <span class="h-6 w-px bg-gray-200" aria-hidden="true" />
                 <a
-                  href="#"
-                  class="flex items-center text-gray-700 hover:text-gray-800"
+                  href="/"
+                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
+                  >Home</a
                 >
-                  <img
-                    src="https://tailwindui.com/img/flags/flag-canada.svg"
-                    alt=""
-                    class="block h-auto w-5 flex-shrink-0"
-                  />
-                  <span class="ml-3 block text-sm font-medium">CAD</span>
-                  <span class="sr-only">, change currency</span>
-                </a>
               </div>
 
               <!-- Search -->
@@ -401,9 +288,9 @@
     </header>
 
     <main
-      class="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8"
+      class="mx-auto max-w-2xl px-4 pb-6 pt-16 sm:px-6 lg:max-w-7xl lg:px-8"
     >
-      <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+      <h1 class="text-3xl font-bold tracking-tight text-[#159243] sm:text-4xl">
         Shopping Cart
       </h1>
 
@@ -465,7 +352,7 @@
                     <select
                       :id="`quantity-${productIdx}`"
                       :name="`quantity-${productIdx}`"
-                      class="max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                      class="max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-[#159243] focus:outline-none focus:ring-1 focus:ring-[#159243] sm:text-sm"
                     >
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -570,169 +457,27 @@
           <div class="mt-6">
             <button
               type="submit"
-              class="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+              class="w-full rounded-md border border-transparent bg-[#159243] px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-[#159243] focus:outline-none focus:ring-2 focus:ring-[#159243] focus:ring-offset-2 focus:ring-offset-gray-50"
             >
               Checkout
             </button>
           </div>
         </section>
       </form>
-
-      <!-- Related products -->
-      <section aria-labelledby="related-heading" class="mt-24">
-        <h2 id="related-heading" class="text-lg font-medium text-gray-900">
-          You may also like&hellip;
-        </h2>
-
-        <div
-          class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"
-        >
-          <div
-            v-for="relatedProduct in relatedProducts"
-            :key="relatedProduct.id"
-            class="group relative"
-          >
-            <div
-              class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md lg:aspect-none group-hover:opacity-75 lg:h-80"
-            >
-              <img
-                :src="relatedProduct.imageSrc"
-                :alt="relatedProduct.imageAlt"
-                class="h-full w-full object-cover object-center lg:h-full lg:w-full"
-              />
-            </div>
-            <div class="mt-4 flex justify-between">
-              <div>
-                <h3 class="text-sm text-gray-700">
-                  <a :href="relatedProduct.href">
-                    <span aria-hidden="true" class="absolute inset-0" />
-                    {{ relatedProduct.name }}
-                  </a>
-                </h3>
-                <p class="mt-1 text-sm text-gray-500">
-                  {{ relatedProduct.color }}
-                </p>
-              </div>
-              <p class="text-sm font-medium text-gray-900">
-                {{ relatedProduct.price }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
 
     <footer aria-labelledby="footer-heading" class="bg-white">
       <h2 id="footer-heading" class="sr-only">Footer</h2>
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="border-t border-gray-200 py-20">
+        <div class="border-t border-gray-200 py-4">
           <div
             class="grid grid-cols-1 md:grid-flow-col md:auto-rows-min md:grid-cols-12 md:gap-x-8 md:gap-y-16"
-          >
-            <!-- Image section -->
-            <div class="col-span-1 md:col-span-2 lg:col-start-1 lg:row-start-1">
-              <img
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                alt=""
-                class="h-8 w-auto"
-              />
-            </div>
-
-            <!-- Sitemap sections -->
-            <div
-              class="col-span-6 mt-10 grid grid-cols-2 gap-8 sm:grid-cols-3 md:col-span-8 md:col-start-3 md:row-start-1 md:mt-0 lg:col-span-6 lg:col-start-2"
-            >
-              <div
-                class="grid grid-cols-1 gap-y-12 sm:col-span-2 sm:grid-cols-2 sm:gap-x-8"
-              >
-                <div>
-                  <h3 class="text-sm font-medium text-gray-900">Products</h3>
-                  <ul role="list" class="mt-6 space-y-6">
-                    <li
-                      v-for="item in footerNavigation.products"
-                      :key="item.name"
-                      class="text-sm"
-                    >
-                      <a
-                        :href="item.href"
-                        class="text-gray-500 hover:text-gray-600"
-                        >{{ item.name }}</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 class="text-sm font-medium text-gray-900">Company</h3>
-                  <ul role="list" class="mt-6 space-y-6">
-                    <li
-                      v-for="item in footerNavigation.company"
-                      :key="item.name"
-                      class="text-sm"
-                    >
-                      <a
-                        :href="item.href"
-                        class="text-gray-500 hover:text-gray-600"
-                        >{{ item.name }}</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div>
-                <h3 class="text-sm font-medium text-gray-900">
-                  Customer Service
-                </h3>
-                <ul role="list" class="mt-6 space-y-6">
-                  <li
-                    v-for="item in footerNavigation.customerService"
-                    :key="item.name"
-                    class="text-sm"
-                  >
-                    <a
-                      :href="item.href"
-                      class="text-gray-500 hover:text-gray-600"
-                      >{{ item.name }}</a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Newsletter section -->
-            <div
-              class="mt-12 md:col-span-8 md:col-start-3 md:row-start-2 md:mt-0 lg:col-span-4 lg:col-start-9 lg:row-start-1"
-            >
-              <h3 class="text-sm font-medium text-gray-900">
-                Sign up for our newsletter
-              </h3>
-              <p class="mt-6 text-sm text-gray-500">
-                The latest deals and savings, sent to your inbox weekly.
-              </p>
-              <form class="mt-2 flex sm:max-w-md">
-                <label for="email-address" class="sr-only">Email address</label>
-                <input
-                  id="email-address"
-                  type="text"
-                  autocomplete="email"
-                  required=""
-                  class="w-full min-w-0 appearance-none rounded-md border border-gray-300 bg-white px-4 py-2 text-base text-gray-900 placeholder-gray-500 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                />
-                <div class="ml-4 flex-shrink-0">
-                  <button
-                    type="submit"
-                    class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >
-                    Sign up
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          ></div>
         </div>
 
-        <div class="border-t border-gray-100 py-10 text-center">
+        <div class="border-t border-gray-100 py-2 text-center">
           <p class="text-sm text-gray-500">
-            &copy; 2021 Your Company, Inc. All rights reserved.
+            &copy; 2023 Caleb S. Lewis Photography. All rights reserved.
           </p>
         </div>
       </div>
@@ -773,24 +518,26 @@ import {
 const navigation = {
   categories: [
     {
-      id: 'women',
-      name: 'Women',
+      id: 'NorthCarolina',
+      name: 'North Carolina',
       featured: [
         {
-          name: 'New Arrivals',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg',
-          imageAlt:
-            'Models sitting back to back, wearing Basic Tee in black and bone.',
+          name: 'Mountains',
+          href: '/ncgallery',
+          imageSrc: 'samplePhotos/Mountain Cave.jpg',
+          imageAlt: 'The mountains of North Carolina',
         },
         {
-          name: 'Basic Tees',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg',
-          imageAlt:
-            'Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.',
+          name: 'Foothills',
+          href: '/ncgallery',
+          imageSrc: 'samplePhotos/Fog in the morning.jpg',
+          imageAlt: 'The foothills of North Carolina',
+        },
+        {
+          name: 'Coast',
+          href: '/ncgallery',
+          imageSrc: 'samplePhotos/Dunes at coast 2.jpg',
+          imageAlt: 'The coast along North Carolina',
         },
       ],
       sections: [
@@ -835,24 +582,38 @@ const navigation = {
       ],
     },
     {
-      id: 'men',
-      name: 'Men',
+      id: 'Texas',
+      name: 'Texas',
       featured: [
         {
-          name: 'New Arrivals',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg',
-          imageAlt:
-            'Drawstring top with elastic loop closure and textured interior padding.',
+          name: 'North/East Texas',
+          href: '/txgallery',
+          imageSrc: 'samplePhotos/Dallas In The Distance.jpg',
+          imageAlt: 'Dallas on the horizon',
         },
         {
-          name: 'Artwork Tees',
-          href: '#',
-          imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg',
-          imageAlt:
-            'Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.',
+          name: 'Panhandle',
+          href: '/txgallery',
+          imageSrc: 'samplePhotos/Palo Duro Canyon.jpg',
+          imageAlt: 'Palo Duro Canyon in the panhandle of Texas',
+        },
+        {
+          name: 'Hill Country',
+          href: '/txgallery',
+          imageSrc: 'samplePhotos/Texas Bluebonnets.jpg',
+          imageAlt: 'Bluebonnets in the hill country of Texas',
+        },
+        {
+          name: 'West Texas',
+          href: '/txgallery',
+          imageSrc: 'samplePhotos/West Texas.jpg',
+          imageAlt: 'An area out in west Texas',
+        },
+        {
+          name: 'Coast',
+          href: '/txgallery',
+          imageSrc: 'samplePhotos/Texas Coast.jpg',
+          imageAlt: 'Along the coast of Texas',
         },
       ],
       sections: [
@@ -894,47 +655,42 @@ const navigation = {
       ],
     },
   ],
-  pages: [
-    { name: 'Company', href: '#' },
-    { name: 'Stores', href: '#' },
-  ],
+  pages: [],
 };
 const products = [
   {
     id: 1,
-    name: 'Basic Tee',
+    name: 'Afternoon Rainstorm',
     href: '#',
     price: '$32.00',
     color: 'Sienna',
     inStock: true,
-    size: 'Large',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-01.jpg',
-    imageAlt: "Front of men's Basic Tee in sienna.",
+    size: '12x18',
+    imageSrc: '/samplePhotos/Afternoon rainstorm 1.jpg',
+    imageAlt: 'An afternoon rainstorm near the community of Clingman, NC',
   },
   {
     id: 2,
-    name: 'Basic Tee',
+    name: 'Historic plantation houses',
     href: '#',
-    price: '$32.00',
+    price: '$48.00',
     color: 'Black',
     inStock: false,
     leadTime: '3–4 weeks',
-    size: 'Large',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-02.jpg',
-    imageAlt: "Front of men's Basic Tee in black.",
+    size: '24x36',
+    imageSrc: '/samplePhotos/Farm House 2.jpg',
+    imageAlt: 'A historic plantation in eastern NC',
   },
   {
     id: 3,
-    name: 'Nomad Tumbler',
+    name: 'Fog in the Morning',
     href: '#',
     price: '$35.00',
     color: 'White',
     inStock: true,
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-03.jpg',
-    imageAlt: 'Insulated bottle with white base and black snap lid.',
+    size: '12x18',
+    imageSrc: '/samplePhotos/Fog in the morning.jpg',
+    imageAlt: 'Fog laying low in a field with the foothills of NC',
   },
 ];
 const relatedProducts = [

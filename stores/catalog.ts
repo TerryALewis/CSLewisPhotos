@@ -13,6 +13,8 @@ export const useCatalogStore = defineStore('catalog', {
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
         size: '1.2 MB',
+        galleryID: 1,
+        category: 2, //'Foothills'
       },
       {
         id: 2,
@@ -24,6 +26,8 @@ export const useCatalogStore = defineStore('catalog', {
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
         size: '2.3 MB',
+        galleryID: 1,
+        category: 2, //'Foothills'
       },
       {
         id: 3,
@@ -34,6 +38,8 @@ export const useCatalogStore = defineStore('catalog', {
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
         size: '4.1 MB',
+        galleryID: 1,
+        category: 4, //'Coast'
       },
       {
         id: 4,
@@ -44,6 +50,8 @@ export const useCatalogStore = defineStore('catalog', {
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
         size: '3.9 MB',
+        galleryID: 1,
+        category: 4, //'Coast'
       },
       {
         id: 5,
@@ -54,6 +62,8 @@ export const useCatalogStore = defineStore('catalog', {
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
         size: '2.7 MB',
+        galleryID: 1,
+        category: 4, //'Coast'
       },
       {
         id: 6,
@@ -64,6 +74,8 @@ export const useCatalogStore = defineStore('catalog', {
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
         size: '3.6 MB',
+        galleryID: 1,
+        category: 4, //'Coast'
       },
       {
         id: 7,
@@ -74,6 +86,8 @@ export const useCatalogStore = defineStore('catalog', {
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
         size: '4.2 MB',
+        galleryID: 1,
+        category: 4, //'Coast'
       },
       {
         id: 8,
@@ -84,9 +98,97 @@ export const useCatalogStore = defineStore('catalog', {
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
         size: '2.9 MB',
+        galleryID: 1,
+        category: 2, //'Foothills'
+      },
+      {
+        id: 9,
+        title: 'Palo Duro Canyon',
+        href: '#',
+        description: 'A small cousin to the Grand Canyon',
+        imageUrl: '/samplePhotos/Palo Duro Canyon.jpg',
+        releaseVersion: '1.0.1',
+        creationDate: 'Dec 17, 2023',
+        size: '3.2 MB',
+        galleryID: 2,
+        category: 1, //'North/East Texas'
+      },
+      {
+        id: 10,
+        title: 'Texas Bluebonnets',
+        href: '#',
+        description: 'Bluebonnets in the Hill Country of Texas in the Spring',
+        imageUrl: '/samplePhotos/Texas Bluebonnets.jpg',
+        releaseVersion: '1.0.1',
+        creationDate: 'Dec 17, 2023',
+        size: '2.9 MB',
+        galleryID: 2,
+        category: 2, //'Hill Country'
+      },
+      {
+        id: 11,
+        title: 'Texas Coast',
+        href: '#',
+        description: 'The beach along the coats of southeast Texas',
+        imageUrl: '/samplePhotos/Texas Coast.jpg',
+        releaseVersion: '1.0.1',
+        creationDate: 'Dec 17, 2023',
+        size: '3.3 MB',
+        galleryID: 2,
+        category: 3, //'Coast'
+      },
+      {
+        id: 12,
+        title: 'West Texas',
+        href: '#',
+        description: 'The desert plains of west Texas',
+        imageUrl: '/samplePhotos/West Texas.jpg',
+        releaseVersion: '1.0.1',
+        creationDate: 'Dec 17, 2023',
+        size: '3.7 MB',
+        galleryID: 2,
+        category: 4, //'West Texas'
+      },
+      {
+        id: 13,
+        title: 'Dallas in the Distance',
+        href: '#',
+        description: 'View of Dallas',
+        imageUrl: '/samplePhotos/Dallas in the Distance.jpg',
+        releaseVersion: '1.0.1',
+        creationDate: 'Dec 17, 2023',
+        size: '3.9 MB',
+        galleryID: 2,
+        category: 1, //'North/East Texas'
       },
     ],
   }),
-  getters: {},
+  getters: {
+    getPhotossByGalleryID: (state) => (galleryID: number) => {
+      return state.samplePhotos.filter(
+        (photo) => photo.galleryID === galleryID
+      );
+    },
+    getPhotosByGalleryIDAndCategory:
+      (state) => (galleryID: number, category: number) => {
+        return state.samplePhotos.filter(
+          (photo) =>
+            photo.galleryID === galleryID && photo.category === category
+        );
+      },
+    getPhotosByGalleryIDAndOptionalCategory:
+      (state) => (galleryID: number, category: number) => {
+        if (category === 0) {
+          return state.samplePhotos.filter(
+            (photo) => photo.galleryID === galleryID
+          );
+        } else {
+          return state.samplePhotos.filter(
+            (photo) =>
+              photo.galleryID === galleryID && photo.category === category
+          );
+        }
+      },
+  },
   actions: {},
 });

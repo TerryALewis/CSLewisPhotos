@@ -523,19 +523,19 @@ const navigation = {
       featured: [
         {
           name: 'Mountains',
-          href: '/ncgallery',
+          href: '/galleries/1-1',
           imageSrc: 'samplePhotos/Mountain Cave.jpg',
           imageAlt: 'The mountains of North Carolina',
         },
         {
           name: 'Foothills',
-          href: '/ncgallery',
+          href: '/galleries/1-2',
           imageSrc: 'samplePhotos/Fog in the morning.jpg',
           imageAlt: 'The foothills of North Carolina',
         },
         {
           name: 'Coast',
-          href: '/ncgallery',
+          href: '/galleries/1-4',
           imageSrc: 'samplePhotos/Dunes at coast 2.jpg',
           imageAlt: 'The coast along North Carolina',
         },
@@ -587,31 +587,31 @@ const navigation = {
       featured: [
         {
           name: 'North/East Texas',
-          href: '/txgallery',
+          href: '/galleries/2-1',
           imageSrc: 'samplePhotos/Dallas In The Distance.jpg',
           imageAlt: 'Dallas on the horizon',
         },
         {
           name: 'Panhandle',
-          href: '/txgallery',
+          href: '/galleries/2-1',
           imageSrc: 'samplePhotos/Palo Duro Canyon.jpg',
           imageAlt: 'Palo Duro Canyon in the panhandle of Texas',
         },
         {
           name: 'Hill Country',
-          href: '/txgallery',
+          href: '/galleries/2-2',
           imageSrc: 'samplePhotos/Texas Bluebonnets.jpg',
           imageAlt: 'Bluebonnets in the hill country of Texas',
         },
         {
           name: 'West Texas',
-          href: '/txgallery',
+          href: '/galleries/2-4',
           imageSrc: 'samplePhotos/West Texas.jpg',
           imageAlt: 'An area out in west Texas',
         },
         {
           name: 'Coast',
-          href: '/txgallery',
+          href: '/galleries/2-3',
           imageSrc: 'samplePhotos/Texas Coast.jpg',
           imageAlt: 'Along the coast of Texas',
         },

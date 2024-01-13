@@ -22,7 +22,7 @@
         class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8"
       >
         <div 
-          v-for="samplePhoto in photoCatalog.getPhotossByGalleryID(0)" 
+          v-for="samplePhoto in photoCatalog.getPhotosByGalleryIDAndOptionalCategory(galleryDesiredInt, categoryDesiredInt)" 
           :key="samplePhoto.imageUrl" 
           class="relative" >
           <li>
@@ -76,9 +76,10 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
-import { useCatalogStore } from '../stores/catalog';
-import { cartStore } from '../stores/cart';
+import { useCatalogStore } from '../../stores/catalog';
+import { cartStore } from '../../stores/cart';
 
 const photoCatalog = useCatalogStore();
 const cart = cartStore();
@@ -94,6 +95,13 @@ const addToCart = (ID: number) => {
 const clickMe = () => {
   console.log('clicked');
 };
+
+const route = useRoute();
+const passedParams = route.params.gallery.toString();
+
+const [galleryDesired, categoryDesired] = passedParams.split('-');
+const galleryDesiredInt = parseInt(galleryDesired);
+const categoryDesiredInt = parseInt(categoryDesired);
 </script>
 
 <style scoped></style>

@@ -58,8 +58,8 @@
         <div
           class="grid grid-cols-1 gap-x-8 gap-y-6 text-base font-semibold leading-7 text-white sm:grid-cols-2 md:flex lg:gap-x-10"
         >
-          <NuxtLink to="/ncgallery" class="pr-4">NC Gallery</NuxtLink>
-          <NuxtLink to="/txgallery" class="pr-4">Texas Gallery</NuxtLink>
+          <NuxtLink to="/galleries/1-0" class="pr-4">NC Gallery</NuxtLink>
+          <NuxtLink to="/galleries/2-0" class="pr-4">Texas Gallery</NuxtLink>
           <NuxtLink to="/cart" class="pr-4">Your cart</NuxtLink>
           <NuxtLink to="/about">About Caleb</NuxtLink>
         </div>

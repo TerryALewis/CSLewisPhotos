@@ -12,6 +12,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Afternoon rainstorm 1.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 24.95,
         size: '1.2 MB',
         galleryID: 1,
         category: 2, //'Foothills'
@@ -25,6 +26,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Afternoon rainstorm 2.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 26.95,
         size: '2.3 MB',
         galleryID: 1,
         category: 2, //'Foothills'
@@ -37,6 +39,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Dunes at coast 1.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 31.95,
         size: '4.1 MB',
         galleryID: 1,
         category: 4, //'Coast'
@@ -49,6 +52,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Dunes at coast 2.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 28.95,
         size: '3.9 MB',
         galleryID: 1,
         category: 4, //'Coast'
@@ -61,6 +65,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Farm House 2.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 22.95,
         size: '2.7 MB',
         galleryID: 1,
         category: 4, //'Coast'
@@ -73,6 +78,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Farm Houses.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 22.95,
         size: '3.6 MB',
         galleryID: 1,
         category: 4, //'Coast'
@@ -85,6 +91,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Farm Lane.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 22.95,
         size: '4.2 MB',
         galleryID: 1,
         category: 4, //'Coast'
@@ -97,6 +104,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Fog in the morning.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 33.95,
         size: '2.9 MB',
         galleryID: 1,
         category: 2, //'Foothills'
@@ -109,6 +117,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Palo Duro Canyon.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 41.95,
         size: '3.2 MB',
         galleryID: 2,
         category: 1, //'North/East Texas'
@@ -121,6 +130,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Texas Bluebonnets.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 42.95,
         size: '2.9 MB',
         galleryID: 2,
         category: 2, //'Hill Country'
@@ -133,6 +143,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Texas Coast.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 41.95,
         size: '3.3 MB',
         galleryID: 2,
         category: 3, //'Coast'
@@ -145,6 +156,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/West Texas.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 44.95,
         size: '3.7 MB',
         galleryID: 2,
         category: 4, //'West Texas'
@@ -157,6 +169,7 @@ export const useCatalogStore = defineStore('catalog', {
         imageUrl: '/samplePhotos/Dallas in the Distance.jpg',
         releaseVersion: '1.0.1',
         creationDate: 'Dec 17, 2023',
+        price: 39.95,
         size: '3.9 MB',
         galleryID: 2,
         category: 1, //'North/East Texas'
@@ -164,6 +177,9 @@ export const useCatalogStore = defineStore('catalog', {
     ],
   }),
   getters: {
+    getPhotoByID: (state) => (id: number) => {
+      return state.samplePhotos.find((photo) => photo.id === id);
+    },
     getPhotossByGalleryID: (state) => (galleryID: number) => {
       return state.samplePhotos.filter(
         (photo) => photo.galleryID === galleryID

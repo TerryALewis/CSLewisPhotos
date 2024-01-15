@@ -113,8 +113,10 @@
                   >
                 </div>
                 <div class="flow-root">
-                  <a href="/" class="-m-2 block p-2 font-medium text-[#159243]"
-                    >Home</a
+                  <NuxtLink
+                    to="/"
+                    class="-m-2 block p-2 font-medium text-[#159243]"
+                    >Home</NuxtLink
                   >
                 </div>
               </div>
@@ -202,7 +204,7 @@
                                   class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75"
                                 >
                                   <img
-                                    :src="item.imageSrc"
+                                    :src="item.imageUrl"
                                     :alt="item.imageAlt"
                                     class="object-cover object-center"
                                   />
@@ -276,7 +278,7 @@
                   />
                   <span
                     class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800"
-                    >0</span
+                    >{{ cart.items.length.toString() }}</span
                   >
                   <span class="sr-only">items in cart, view bag</span>
                 </a>
@@ -287,9 +289,7 @@
       </nav>
     </header>
 
-    <main
-      class="mx-auto max-w-2xl px-4 pb-6 pt-16 sm:px-6 lg:max-w-7xl lg:px-8"
-    >
+    <main class="mx-auto max-w-2xl px-4 pb-6 pt-8 sm:px-6 lg:max-w-7xl lg:px-8">
       <h1 class="text-3xl font-bold tracking-tight text-[#159243] sm:text-4xl">
         Shopping Cart
       </h1>
@@ -305,14 +305,14 @@
             class="divide-y divide-gray-200 border-b border-t border-gray-200"
           >
             <li
-              v-for="(product, productIdx) in products"
-              :key="product.id"
+              v-for="(item, itemIdx) in cart.items"
+              :key="item.id"
               class="flex py-6 sm:py-10"
             >
               <div class="flex-shrink-0">
                 <img
-                  :src="product.imageSrc"
-                  :alt="product.imageAlt"
+                  :src="item.imageUrl"
+                  :alt="item.title"
                   class="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
                 />
               </div>
@@ -325,33 +325,30 @@
                     <div class="flex justify-between">
                       <h3 class="text-sm">
                         <a
-                          :href="product.href"
+                          :href="item.imageUrl"
                           class="font-medium text-gray-700 hover:text-gray-800"
-                          >{{ product.name }}</a
+                          >{{ item.title }}</a
                         >
                       </h3>
                     </div>
                     <div class="mt-1 flex text-sm">
-                      <p class="text-gray-500">{{ product.color }}</p>
-                      <p
-                        v-if="product.size"
-                        class="ml-4 border-l border-gray-200 pl-4 text-gray-500"
-                      >
-                        {{ product.size }}
+                      <!-- <p class="text-gray-500">{{ product.color }}</p> -->
+                      <p v-if="item.imageSize" class="text-gray-500">
+                        Size: {{ item.imageSize }}
                       </p>
                     </div>
-                    <p class="mt-1 text-sm font-medium text-gray-900">
-                      {{ product.price }}
+                    <p class="mt-6 text-sm font-medium text-gray-900">
+                      $ {{ item.price }}
                     </p>
                   </div>
 
                   <div class="mt-4 sm:mt-0 sm:pr-9">
-                    <label :for="`quantity-${productIdx}`" class="sr-only"
-                      >Quantity, {{ product.name }}</label
+                    <label :for="`quantity-${itemIdx}`" class="sr-only"
+                      >Quantity, {{ item.title }}</label
                     >
                     <select
-                      :id="`quantity-${productIdx}`"
-                      :name="`quantity-${productIdx}`"
+                      :id="`quantity-${itemIdx}`"
+                      :name="`quantity-${itemIdx}`"
                       class="max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-[#159243] focus:outline-none focus:ring-1 focus:ring-[#159243] sm:text-sm"
                     >
                       <option value="1">1</option>
@@ -376,7 +373,7 @@
                   </div>
                 </div>
 
-                <p class="mt-4 flex space-x-2 text-sm text-gray-700">
+                <!-- <p class="mt-4 flex space-x-2 text-sm text-gray-700">
                   <CheckIcon
                     v-if="product.inStock"
                     class="h-5 w-5 flex-shrink-0 text-green-500"
@@ -392,7 +389,7 @@
                       ? 'In stock'
                       : `Ships in ${product.leadTime}`
                   }}</span>
-                </p>
+                </p> -->
               </div>
             </li>
           </ul>
@@ -514,6 +511,10 @@ import {
   QuestionMarkCircleIcon,
   XMarkIcon as XMarkIconMini,
 } from '@heroicons/vue/20/solid';
+
+import { cartStore } from '../stores/cart';
+const cart = cartStore();
+//const cartItems = cart.items;
 
 const navigation = {
   categories: [
@@ -657,6 +658,7 @@ const navigation = {
   ],
   pages: [],
 };
+
 const products = [
   {
     id: 1,

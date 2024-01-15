@@ -81,6 +81,13 @@
 import { useCatalogStore } from '../../stores/catalog';
 import { cartStore } from '../../stores/cart';
 
+const route = useRoute();
+const passedParams = route.params.gallery.toString();
+
+const [galleryDesired, categoryDesired] = passedParams.split('-');
+const galleryDesiredInt = parseInt(galleryDesired);
+const categoryDesiredInt = parseInt(categoryDesired);
+
 const photoCatalog = useCatalogStore();
 const cart = cartStore();
 
@@ -88,20 +95,16 @@ const isChecked = ref(false);
 
 const addToCart = (ID: number) => {
   console.log('entered addToCart method');
-  cart.addToCart(photoCatalog.samplePhotos[ID].title);
-  console.log('cart', cart);
+  console.log('ID to add: ', ID.toString());
+  cart.addToCart(ID, 1);
+  console.log('Cart Items: ', cart.items);
 };
 
 const clickMe = () => {
   console.log('clicked');
 };
 
-const route = useRoute();
-const passedParams = route.params.gallery.toString();
 
-const [galleryDesired, categoryDesired] = passedParams.split('-');
-const galleryDesiredInt = parseInt(galleryDesired);
-const categoryDesiredInt = parseInt(categoryDesired);
 </script>
 
 <style scoped></style>

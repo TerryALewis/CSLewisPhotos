@@ -363,6 +363,7 @@
 
                     <div class="absolute right-0 top-0">
                       <button
+                        @click="removeCartItem(itemIdx)"
                         type="button"
                         class="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500"
                       >
@@ -736,4 +737,11 @@ const footerNavigation = {
 };
 
 const open = ref(false);
+
+const removeCartItem = (itemIdx) => {
+  console.log('entered removeCartItem method');
+  console.log('itemIdx to remove: ', itemIdx.toString());
+  cart.removeItemFromCart(itemIdx);
+  console.log('Cart Items: ', cart.items);
+};
 </script>

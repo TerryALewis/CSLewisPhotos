@@ -26,6 +26,10 @@ export const cartStore = defineStore('cart', {
         this.items.push(item);
       }
     },
+    removeItemFromCart(itemIndex: number) {
+      console.log('cart item to remove: ', itemIndex.toString());
+      this.items.splice(itemIndex, 1);
+    },
   },
 });
 

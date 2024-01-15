@@ -2,6 +2,10 @@ import { defineStore } from 'pinia';
 
 export const useCatalogStore = defineStore('catalog', {
   state: () => ({
+    galleries: [
+      { id: 1, title: 'North Carolina' },
+      { id: 2, title: 'Texas' },
+    ],
     samplePhotos: [
       {
         id: 1,
@@ -177,6 +181,12 @@ export const useCatalogStore = defineStore('catalog', {
     ],
   }),
   getters: {
+    getGalleries: (state) => {
+      return state.galleries;
+    },
+    getGalleryByID: (state) => (id: number) => {
+      return state.galleries.find((gallery) => gallery.id === id);
+    },
     getPhotoByID: (state) => (id: number) => {
       return state.samplePhotos.find((photo) => photo.id === id);
     },

@@ -49,17 +49,21 @@
             class="pointer-events-auto block text-sm font-medium text-gray-500"
           >
             <div class="grid grid-cols-12">
-              <div class="col-span-7 items-start text-xs">
-                {{ samplePhoto.size }}
+              <div class="col-span-9 flex justify-start text-xs">
+              {{ samplePhoto.size }}
+              </div>
+              <div class="col-span-3 flex justify-end text-xs">
+                $ {{ samplePhoto.price }}
               </div>
               
-              <div class="col-span-5 items-end">                                   
-                <button @click="addToCart(samplePhoto.id)" class=" text-xs text-[#159243]">
+            </div>
+            <div class="flex justify-end">                                   
+                <button @click="addToCart(samplePhoto.id)" class="text-xs text-[#159243]">
                   <nuxt-icon name="MdiCartOutline" class="text-[#159243] h-3 w-3 inline-block pr-1" />
                   Add to cart  
                 </button>                
               </div>
-            </div>
+            
           </p>
         </li>  
         </div>  

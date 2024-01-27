@@ -56,13 +56,11 @@
       </div>
       <div class="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
         <div
-          class="grid grid-rows-1 gap-x-8 gap-y-6 text-base font-semibold leading-7 text-white sm:grid-cols-2 md:flex lg:gap-x-10"
+          class="grid grid-rows-1 gap-x-8 gap-y-6 text-base font-semibold leading-7 text-white sm:grid-cols-3 md:grid-cols-3 md:flex md:gap-x-10 lg:gap-x-10 sm:gap-x-2"
         >
           <Menu as="div" class="relative inline-block text-left">
             <div>
-              <MenuButton
-                class="inline-flex w-full justify-center px-3 text-white"
-              >
+              <MenuButton class="inline-flex justify-center text-white">
                 Galleries
                 <ChevronDownIcon
                   class="-mr-1 mt-1 h-5 w-5 text-white justify-center"

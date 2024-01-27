@@ -254,10 +254,19 @@
                   >Create account</a
                 >
                 <span class="h-6 w-px bg-gray-200" aria-hidden="true" />
-                <a
-                  href="/"
+                <!-- <NuxtLink
+                  to="/"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >Home</a
+                  >Home</NuxtLink
+                > -->
+              </div>
+
+              <div class="flex mr-6 lg:mr-2 lg:ml-6">
+                <!-- <span class="h-6 w-px bg-gray-200" aria-hidden="true" /> -->
+                <NuxtLink
+                  to="/"
+                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
+                  >Home</NuxtLink
                 >
               </div>
 

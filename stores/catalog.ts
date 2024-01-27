@@ -181,6 +181,11 @@ export const useCatalogStore = defineStore('catalog', {
     ],
   }),
   getters: {
+    getGalleriesLinks: (state) => {
+      return state.galleries.map((gallery) => {
+        return { id: gallery.id, title: gallery.title, href: '#' };
+      });
+    },
     getGalleries: (state) => {
       return state.galleries;
     },

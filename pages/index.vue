@@ -49,17 +49,63 @@
           Caleb S. Lewis<br />Photography
         </h2>
         <p class="mt-6 text-lg leading-8 text-white font-semibold">
-          Photographic work from Caleb S. Lewis. <br />
+          Photographic work from Caleb S. Lewis. <br /><br />
           Featuring rural North Carolina and Texas scenery capturing the majesty
           of God's creation.
         </p>
       </div>
       <div class="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
         <div
-          class="grid grid-cols-1 gap-x-8 gap-y-6 text-base font-semibold leading-7 text-white sm:grid-cols-2 md:flex lg:gap-x-10"
+          class="grid grid-rows-1 gap-x-8 gap-y-6 text-base font-semibold leading-7 text-white sm:grid-cols-2 md:flex lg:gap-x-10"
         >
-          <NuxtLink to="/galleries/1-0" class="pr-4">NC Gallery</NuxtLink>
-          <NuxtLink to="/galleries/2-0" class="pr-4">Texas Gallery</NuxtLink>
+          <Menu as="div" class="relative inline-block text-left">
+            <div>
+              <MenuButton
+                class="inline-flex w-full justify-center px-3 text-white"
+              >
+                Galleries
+                <ChevronDownIcon
+                  class="-mr-1 mt-1 h-5 w-5 text-white justify-center"
+                  aria-hidden="true"
+                />
+              </MenuButton>
+            </div>
+            <transition
+              enter-active-class="transition ease-out duration-100"
+              enter-from-class="transform opacity-0 scale-95"
+              enter-to-class="transform opacity-100 scale-100"
+              leave-active-class="transition ease-in duration-75"
+              leave-from-class="transform opacity-100 scale-100"
+              leave-to-class="transform opacity-0 scale-95"
+            >
+              <MenuItems
+                class="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              >
+                <div class="py-1">
+                  <MenuItem v-slot="{ active }">
+                    <NuxtLink
+                      to="/galleries/1-0"
+                      :class="[
+                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        'block px-4 py-2 text-sm',
+                      ]"
+                      >North Carolina Gallery</NuxtLink
+                    >
+                  </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <NuxtLink
+                      to="/galleries/2-0"
+                      :class="[
+                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        'block px-4 py-2 text-sm',
+                      ]"
+                      >Texas Gallery</NuxtLink
+                    >
+                  </MenuItem>
+                </div>
+              </MenuItems>
+            </transition>
+          </Menu>
           <NuxtLink to="/cart" class="pr-4">Your cart</NuxtLink>
           <NuxtLink to="/about">About Caleb</NuxtLink>
         </div>
@@ -69,6 +115,8 @@
 </template>
 
 <script setup lang="ts">
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+import { ChevronDownIcon } from '@heroicons/vue/20/solid';
 const links = [
   { name: 'Gallery', to: '/ncgallery' },
   { name: 'Purchasing photographs', to: '/purchasing' },

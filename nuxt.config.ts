@@ -7,6 +7,14 @@ export default defineNuxtConfig({
     '@': resolve(__dirname, './src'),
   },
 
+  runtimeConfig: {
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    public: {
+      stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+      domain: process.env.NUXT_PUBLIC_DOMAIN,
+    },
+  },
+
   modules: [
     [
       // ...

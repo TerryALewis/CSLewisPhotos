@@ -28,9 +28,11 @@
   "dependencies": {
     "@heroicons/vue": "^2.1.1",
     "@nuxt/image": "^1.1.0",
+    "@stripe/stripe-js": "^7.5.0",
     "nuxt-icons": "^3.2.1",
     "pinia": "^2.1.7",
     "require-context": "^1.1.0",
+    "stripe": "^18.3.0",
     "vue-gallery-slideshow": "^1.5.2"
   },
   "overides": {

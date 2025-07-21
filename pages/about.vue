@@ -84,7 +84,7 @@ const people = [
     name: 'Caleb S. Lewis',
     role: 'Photographer',
     imageUrl: '/images/Caleb.jpg',
-    bio: 'Caleb S. Lewis (named after the famous author C.S.Lewis) was born in eastern North Carolina. And, at the age of 3 moved to Texas where he lived for 28 years. During that 28 years, he developed quite a skill of capturing the beauty present in nature. Here at this site he shares some of those photographs captured over the years in Texas and now in North Carolina where he has lived for over 3 years in the western foothills of the state.',
+    bio: 'Caleb S. Lewis (named after the famous author C.S. Lewis) was born in eastern North Carolina. And, at the age of 3 moved to Texas where he lived for 28 years. During that 28 years, he developed quite a skill of capturing the beauty present in nature. Here at this site he shares some of those photographs captured over the years in Texas and now in North Carolina where he has lived for over 3 years in the western foothills of the state.',
     twitterUrl: '#',
     linkedinUrl: '#',
   },

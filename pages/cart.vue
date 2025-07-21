@@ -472,11 +472,21 @@
 
           <div class="mt-6">
             <button
-              type="submit"
-              class="w-full rounded-md border border-transparent bg-[#159243] px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-[#159243] focus:outline-none focus:ring-2 focus:ring-[#159243] focus:ring-offset-2 focus:ring-offset-gray-50"
+              @click="handleCheckout"
+              :disabled="cart.items.length === 0 || isProcessingCheckout"
+              type="button"
+              class="w-full rounded-md border border-transparent bg-[#159243] px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-[#127a38] focus:outline-none focus:ring-2 focus:ring-[#159243] focus:ring-offset-2 focus:ring-offset-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Checkout
+              <span v-if="isProcessingCheckout">Processing...</span>
+              <span v-else>Checkout</span>
             </button>
+
+            <div
+              v-if="checkoutError"
+              class="mt-3 text-sm text-red-600 text-center"
+            >
+              {{ checkoutError }}
+            </div>
           </div>
         </section>
       </form>
@@ -755,6 +765,8 @@ const footerNavigation = {
 };
 
 const open = ref(false);
+const isProcessingCheckout = ref(false);
+const checkoutError = ref('');
 
 const changeCartItemQty = (itemIdx, qty) => {
   console.log('entered changeCartItemQty method');
@@ -769,5 +781,44 @@ const removeCartItem = (itemIdx) => {
   console.log('itemIdx to remove: ', itemIdx.toString());
   cart.removeItemFromCart(itemIdx);
   console.log('Cart Items: ', cart.items);
+};
+
+const handleCheckout = async () => {
+  if (cart.items.length === 0) {
+    checkoutError.value = 'Your cart is empty';
+    return;
+  }
+
+  isProcessingCheckout.value = true;
+  checkoutError.value = '';
+
+  try {
+    // Create checkout session
+    const response = await $fetch('/api/create-checkout-session', {
+      method: 'POST',
+      body: {
+        items: cart.items.map((item) => ({
+          id: item.id,
+          title: item.title,
+          price: item.price,
+          quantity: item.quantity,
+          imageUrl: item.imageUrl,
+          imageSize: item.imageSize,
+        })),
+      },
+    });
+
+    // Redirect to Stripe checkout
+    if (response.url) {
+      await navigateTo(response.url, { external: true });
+    } else {
+      throw new Error('No checkout URL received');
+    }
+  } catch (error) {
+    console.error('Checkout error:', error);
+    checkoutError.value = 'Failed to process checkout. Please try again.';
+  } finally {
+    isProcessingCheckout.value = false;
+  }
 };
 </script>

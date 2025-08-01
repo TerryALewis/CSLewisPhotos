@@ -21,6 +21,7 @@ npx convex dev
 ```
 
 This command will:
+
 - Create a `convex/` directory in your project root
 - Generate initial configuration files
 - Prompt you to create a Convex account or log in
@@ -28,12 +29,14 @@ This command will:
 ## Step 3: Set Up Convex Configuration
 
 ### Update `.env.local` (create if it doesn't exist)
+
 ```env
 CONVEX_DEPLOYMENT=your-deployment-url
-NEXT_PUBLIC_CONVEX_URL=your-convex-url
+CONVEX_URL=your-convex-url
 ```
 
 ### Update `nuxt.config.ts`
+
 Add Convex configuration to your Nuxt config:
 
 ```typescript
@@ -41,11 +44,11 @@ export default defineNuxtConfig({
   // ... existing config
   runtimeConfig: {
     public: {
-      convexUrl: process.env.NEXT_PUBLIC_CONVEX_URL
-    }
+      convexUrl: process.env.CONVEX_URL,
+    },
   },
-  plugins: ['~/plugins/convex.client.ts']
-})
+  plugins: ['~/plugins/convex.client.ts'],
+});
 ```
 
 ## Step 4: Create Convex Plugin for Nuxt
@@ -53,28 +56,30 @@ export default defineNuxtConfig({
 Create `plugins/convex.client.ts`:
 
 ```typescript
-import { ConvexReactClient } from "convex/react"
+import { ConvexHttpClient } from 'convex/browser';
 
 export default defineNuxtPlugin(() => {
-  const config = useRuntimeConfig()
-  
-  const convex = new ConvexReactClient(config.public.convexUrl)
-  
+  const config = useRuntimeConfig();
+
+  const convex = new ConvexHttpClient(config.public.convexUrl);
+
   return {
     provide: {
-      convex
-    }
-  }
-})
+      convex,
+    },
+  };
+});
 ```
+
+**Note:** We use `ConvexHttpClient` from `convex/browser` instead of `ConvexReactClient` because this is a Nuxt.js/Vue application, not a React application. The browser client provides the same functionality without React dependencies.
 
 ## Step 5: Define Database Schema
 
 Create `convex/schema.ts`:
 
 ```typescript
-import { defineSchema, defineTable } from "convex/server"
-import { v } from "convex/values"
+import { defineSchema, defineTable } from 'convex/server';
+import { v } from 'convex/values';
 
 export default defineSchema({
   photos: defineTable({
@@ -88,30 +93,32 @@ export default defineSchema({
     isAvailable: v.boolean(),
     tags: v.optional(v.array(v.string())),
     createdAt: v.number(),
-  }).index("by_category", ["category"]),
+  }).index('by_category', ['category']),
 
   cart: defineTable({
     sessionId: v.string(),
-    photoId: v.id("photos"),
+    photoId: v.id('photos'),
     quantity: v.number(),
     addedAt: v.number(),
   })
-    .index("by_session", ["sessionId"])
-    .index("by_photo", ["photoId"]),
+    .index('by_session', ['sessionId'])
+    .index('by_photo', ['photoId']),
 
   orders: defineTable({
     sessionId: v.string(),
-    items: v.array(v.object({
-      photoId: v.id("photos"),
-      quantity: v.number(),
-      price: v.number(),
-    })),
+    items: v.array(
+      v.object({
+        photoId: v.id('photos'),
+        quantity: v.number(),
+        price: v.number(),
+      })
+    ),
     totalAmount: v.number(),
     status: v.string(), // "pending", "completed", "cancelled"
     stripeSessionId: v.optional(v.string()),
     createdAt: v.number(),
-  }).index("by_session", ["sessionId"]),
-})
+  }).index('by_session', ['sessionId']),
+});
 ```
 
 ## Step 6: Create Database Functions
@@ -119,36 +126,36 @@ export default defineSchema({
 ### Create `convex/photos.ts`:
 
 ```typescript
-import { query, mutation } from "./_generated/server"
-import { v } from "convex/values"
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
 
 export const getPhotosByCategory = query({
   args: { category: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query("photos")
-      .withIndex("by_category", (q) => q.eq("category", args.category))
-      .filter((q) => q.eq(q.field("isAvailable"), true))
-      .collect()
+      .query('photos')
+      .withIndex('by_category', (q) => q.eq('category', args.category))
+      .filter((q) => q.eq(q.field('isAvailable'), true))
+      .collect();
   },
-})
+});
 
 export const getAllPhotos = query({
   args: {},
   handler: async (ctx) => {
     return await ctx.db
-      .query("photos")
-      .filter((q) => q.eq(q.field("isAvailable"), true))
-      .collect()
+      .query('photos')
+      .filter((q) => q.eq(q.field('isAvailable'), true))
+      .collect();
   },
-})
+});
 
 export const getPhotoById = query({
-  args: { id: v.id("photos") },
+  args: { id: v.id('photos') },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.id)
+    return await ctx.db.get(args.id);
   },
-})
+});
 
 export const createPhoto = mutation({
   args: {
@@ -162,90 +169,88 @@ export const createPhoto = mutation({
     tags: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("photos", {
+    return await ctx.db.insert('photos', {
       ...args,
       isAvailable: true,
       createdAt: Date.now(),
-    })
+    });
   },
-})
+});
 ```
 
 ### Create `convex/cart.ts`:
 
 ```typescript
-import { query, mutation } from "./_generated/server"
-import { v } from "convex/values"
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
 
 export const getCartItems = query({
   args: { sessionId: v.string() },
   handler: async (ctx, args) => {
     const cartItems = await ctx.db
-      .query("cart")
-      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-      .collect()
+      .query('cart')
+      .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
+      .collect();
 
     // Get photo details for each cart item
     const itemsWithPhotos = await Promise.all(
       cartItems.map(async (item) => {
-        const photo = await ctx.db.get(item.photoId)
-        return { ...item, photo }
+        const photo = await ctx.db.get(item.photoId);
+        return { ...item, photo };
       })
-    )
+    );
 
-    return itemsWithPhotos
+    return itemsWithPhotos;
   },
-})
+});
 
 export const addToCart = mutation({
   args: {
     sessionId: v.string(),
-    photoId: v.id("photos"),
+    photoId: v.id('photos'),
     quantity: v.number(),
   },
   handler: async (ctx, args) => {
     // Check if item already exists in cart
     const existingItem = await ctx.db
-      .query("cart")
-      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-      .filter((q) => q.eq(q.field("photoId"), args.photoId))
-      .first()
+      .query('cart')
+      .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
+      .filter((q) => q.eq(q.field('photoId'), args.photoId))
+      .first();
 
     if (existingItem) {
       // Update quantity
       return await ctx.db.patch(existingItem._id, {
         quantity: existingItem.quantity + args.quantity,
-      })
+      });
     } else {
       // Add new item
-      return await ctx.db.insert("cart", {
+      return await ctx.db.insert('cart', {
         ...args,
         addedAt: Date.now(),
-      })
+      });
     }
   },
-})
+});
 
 export const removeFromCart = mutation({
-  args: { id: v.id("cart") },
+  args: { id: v.id('cart') },
   handler: async (ctx, args) => {
-    return await ctx.db.delete(args.id)
+    return await ctx.db.delete(args.id);
   },
-})
+});
 
 export const clearCart = mutation({
   args: { sessionId: v.string() },
   handler: async (ctx, args) => {
     const cartItems = await ctx.db
-      .query("cart")
-      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-      .collect()
+      .query('cart')
+      .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
+      .collect();
 
-    await Promise.all(
-      cartItems.map((item) => ctx.db.delete(item._id))
-    )
+    await Promise.all(cartItems.map((item) => ctx.db.delete(item._id)));
   },
-})
+});
 ```
 
 ## Step 7: Update Existing Stores
@@ -253,103 +258,129 @@ export const clearCart = mutation({
 ### Update `stores/catalog.ts`:
 
 ```typescript
+import { api } from '~/convex/_generated/api';
+import type { Doc } from '~/convex/_generated/dataModel';
+
 export const useCatalogStore = defineStore('catalog', () => {
-  const { $convex } = useNuxtApp()
-  
-  const ncPhotos = ref([])
-  const txPhotos = ref([])
-  const loading = ref(false)
+  const { $convex } = useNuxtApp();
+
+  const ncPhotos = ref<Doc<'photos'>[]>([]);
+  const txPhotos = ref<Doc<'photos'>[]>([]);
+  const loading = ref(false);
 
   const loadNCPhotos = async () => {
-    loading.value = true
+    loading.value = true;
     try {
-      ncPhotos.value = await $convex.query("photos:getPhotosByCategory", { category: "NC" })
+      ncPhotos.value = await $convex.query(api.photos.getPhotosByCategory, {
+        category: 'NC',
+      });
     } catch (error) {
-      console.error('Error loading NC photos:', error)
+      console.error('Error loading NC photos:', error);
     } finally {
-      loading.value = false
+      loading.value = false;
     }
-  }
+  };
 
   const loadTXPhotos = async () => {
-    loading.value = true
+    loading.value = true;
     try {
-      txPhotos.value = await $convex.query("photos:getPhotosByCategory", { category: "TX" })
+      txPhotos.value = await $convex.query(api.photos.getPhotosByCategory, {
+        category: 'TX',
+      });
     } catch (error) {
-      console.error('Error loading TX photos:', error)
+      console.error('Error loading TX photos:', error);
     } finally {
-      loading.value = false
+      loading.value = false;
     }
-  }
+  };
 
   return {
     ncPhotos: readonly(ncPhotos),
     txPhotos: readonly(txPhotos),
     loading: readonly(loading),
     loadNCPhotos,
-    loadTXPhotos
-  }
-})
+    loadTXPhotos,
+  };
+});
 ```
 
 ### Update `stores/cart.ts`:
 
 ```typescript
+import { api } from '~/convex/_generated/api';
+import type { Doc, Id } from '~/convex/_generated/dataModel';
+
+interface CartItemWithPhoto {
+  _id: Id<'cart'>;
+  sessionId: string;
+  photoId: Id<'photos'>;
+  quantity: number;
+  addedAt: number;
+  photo: Doc<'photos'> | null;
+}
+
 export const useCartStore = defineStore('cart', () => {
-  const { $convex } = useNuxtApp()
-  
-  const items = ref([])
-  const sessionId = ref('')
-  
+  const { $convex } = useNuxtApp();
+
+  const items = ref<CartItemWithPhoto[]>([]);
+  const sessionId = ref('');
+
   // Generate or retrieve session ID
   onMounted(() => {
-    sessionId.value = localStorage.getItem('sessionId') || crypto.randomUUID()
-    localStorage.setItem('sessionId', sessionId.value)
-    loadCart()
-  })
+    sessionId.value = localStorage.getItem('sessionId') || crypto.randomUUID();
+    localStorage.setItem('sessionId', sessionId.value);
+    loadCart();
+  });
 
   const loadCart = async () => {
     try {
-      items.value = await $convex.query("cart:getCartItems", { sessionId: sessionId.value })
+      items.value = await $convex.query(api.cart.getCartItems, {
+        sessionId: sessionId.value,
+      });
     } catch (error) {
-      console.error('Error loading cart:', error)
+      console.error('Error loading cart:', error);
     }
-  }
+  };
 
-  const addToCart = async (photoId: string, quantity = 1) => {
+  const addToCart = async (photoId: Id<'photos'>, quantity = 1) => {
     try {
-      await $convex.mutation("cart:addToCart", {
+      await $convex.mutation(api.cart.addToCart, {
         sessionId: sessionId.value,
         photoId,
-        quantity
-      })
-      await loadCart()
+        quantity,
+      });
+      await loadCart();
     } catch (error) {
-      console.error('Error adding to cart:', error)
+      console.error('Error adding to cart:', error);
     }
-  }
+  };
 
-  const removeFromCart = async (itemId: string) => {
+  const removeFromCart = async (itemId: Id<'cart'>) => {
     try {
-      await $convex.mutation("cart:removeFromCart", { id: itemId })
-      await loadCart()
+      await $convex.mutation(api.cart.removeFromCart, { id: itemId });
+      await loadCart();
     } catch (error) {
-      console.error('Error removing from cart:', error)
+      console.error('Error removing from cart:', error);
     }
-  }
+  };
 
   const clearCart = async () => {
     try {
-      await $convex.mutation("cart:clearCart", { sessionId: sessionId.value })
-      items.value = []
+      await $convex.mutation(api.cart.clearCart, {
+        sessionId: sessionId.value,
+      });
+      items.value = [];
     } catch (error) {
-      console.error('Error clearing cart:', error)
+      console.error('Error clearing cart:', error);
     }
-  }
+  };
 
   const totalPrice = computed(() => {
-    return items.value.reduce((total, item) => total + (item.photo?.price || 0) * item.quantity, 0)
-  })
+    return items.value.reduce(
+      (total, item) => total + (item.photo?.price || 0) * item.quantity,
+      0
+    );
+  });
 
   return {
     items: readonly(items),
@@ -358,9 +389,9 @@ export const useCartStore = defineStore('cart', () => {
     removeFromCart,
     clearCart,
     loadCart,
-    totalPrice
-  }
-})
+    totalPrice,
+  };
+});
 ```
 
 ## Step 8: Seed Initial Data
@@ -368,7 +399,7 @@ export const useCartStore = defineStore('cart', () => {
 Create `convex/seed.ts`:
 
 ```typescript
-import { internalMutation } from "./_generated/server"
+import { internalMutation } from './_generated/server';
 
 export const seedPhotos = internalMutation({
   args: {},
@@ -376,60 +407,114 @@ export const seedPhotos = internalMutation({
     // Sample NC photos
     const ncPhotos = [
       {
-        title: "NC Coast",
-        description: "Beautiful coastal scenery",
-        imageUrl: "/images/NCCoast.jpg",
-        category: "NC",
-        location: "North Carolina Coast",
-        price: 25.00,
-        tags: ["coast", "ocean", "landscape"]
+        title: 'NC Coast',
+        description: 'Beautiful coastal scenery',
+        imageUrl: '/images/NCCoast.jpg',
+        category: 'NC',
+        location: 'North Carolina Coast',
+        price: 25.0,
+        tags: ['coast', 'ocean', 'landscape'],
       },
       {
-        title: "NC Mountains",
-        description: "Scenic mountain views",
-        imageUrl: "/images/NCMountains.jpg",
-        category: "NC",
-        location: "North Carolina Mountains",
-        price: 25.00,
-        tags: ["mountains", "landscape", "nature"]
+        title: 'NC Mountains',
+        description: 'Scenic mountain views',
+        imageUrl: '/images/NCMountains.jpg',
+        category: 'NC',
+        location: 'North Carolina Mountains',
+        price: 25.0,
+        tags: ['mountains', 'landscape', 'nature'],
       },
-      // Add more NC photos...
-    ]
+      {
+        title: 'NC Foothills',
+        description: 'Rolling hills of North Carolina',
+        imageUrl: '/images/NCFoothills.jpg',
+        category: 'NC',
+        location: 'North Carolina Foothills',
+        price: 25.0,
+        tags: ['foothills', 'landscape', 'nature'],
+      },
+    ];
 
     // Sample TX photos
     const txPhotos = [
       {
-        title: "Texas Bluebonnets",
-        description: "Spring wildflowers in Texas",
-        html: "/samplePhotos/Texas Bluebonnets.jpg",
-        category: "TX",
-        location: "Texas Hill Country",
-        price: 25.00,
-        tags: ["wildflowers", "spring", "texas"]
+        title: 'Texas Bluebonnets',
+        description: 'Spring wildflowers in Texas',
+        imageUrl: '/samplePhotos/Texas Bluebonnets.jpg',
+        category: 'TX',
+        location: 'Texas Hill Country',
+        price: 25.0,
+        tags: ['wildflowers', 'spring', 'texas'],
       },
-      // Add more TX photos...
-    ]
+      {
+        title: 'Palo Duro Canyon',
+        description: 'Stunning canyon views in Texas',
+        imageUrl: '/samplePhotos/Palo Duro Canyon.jpg',
+        category: 'TX',
+        location: 'Palo Duro Canyon State Park',
+        price: 30.0,
+        tags: ['canyon', 'landscape', 'texas', 'desert'],
+      },
+      {
+        title: 'West Texas Landscape',
+        description: 'Vast open spaces of West Texas',
+        imageUrl: '/samplePhotos/West Texas.jpg',
+        category: 'TX',
+        location: 'West Texas',
+        price: 25.0,
+        tags: ['landscape', 'desert', 'texas', 'open'],
+      },
+      {
+        title: 'Texas Coast',
+        description: 'Beautiful Texas coastline',
+        imageUrl: '/samplePhotos/Texas Coast.jpg',
+        category: 'TX',
+        location: 'Texas Gulf Coast',
+        price: 25.0,
+        tags: ['coast', 'ocean', 'texas', 'beach'],
+      },
+      {
+        title: 'Farm Houses',
+        description: 'Rural Texas farm houses',
+        imageUrl: '/samplePhotos/Farm Houses.jpg',
+        category: 'TX',
+        location: 'Rural Texas',
+        price: 20.0,
+        tags: ['rural', 'farm', 'texas', 'countryside'],
+      },
+      {
+        title: 'Thunderstorm at Sunset',
+        description: 'Dramatic storm clouds at sunset',
+        imageUrl: '/samplePhotos/Thunderstorm at sunset 1.jpg',
+        category: 'TX',
+        location: 'Texas Plains',
+        price: 35.0,
+        tags: ['storm', 'sunset', 'dramatic', 'weather'],
+      },
+    ];
 
     // Insert photos
     for (const photo of [...ncPhotos, ...txPhotos]) {
-      await ctx.db.insert("photos", {
+      await ctx.db.insert('photos', {
         ...photo,
         isAvailable: true,
         createdAt: Date.now(),
-      })
+      });
     }
   },
-})
+});
 ```
 
 ## Step 9: Deploy and Test
 
 1. **Deploy your functions:**
+
    ```bash
    npx convex deploy
    ```
 
 2. **Seed your database:**
+
    ```bash
    npx convex run seed:seedPhotos
    ```

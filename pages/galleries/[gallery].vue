@@ -82,7 +82,7 @@
 
 <script setup lang="ts">
 import { useCatalogStore } from '../../stores/catalog';
-import { cartStore } from '../../stores/cart';
+import { useCartStore } from '../../stores/cart';
 import {
     Bars3Icon,
     MagnifyingGlassIcon,
@@ -98,7 +98,7 @@ const galleryDesiredInt = parseInt(galleryDesired);
 const categoryDesiredInt = parseInt(categoryDesired);
 
 const photoCatalog = useCatalogStore();
-const cart = cartStore();
+const cart = useCartStore();
 
 const isChecked = ref(false);
 

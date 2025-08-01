@@ -1,5 +1,15 @@
 <template>
   <div class="bg-gray-200 h-screen">
+    <div class="flex justify-end pt-1 pr-4">
+      <NuxtLink to="/cart" class="text-black text-md font-semibold">
+      <ShoppingBagIcon class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+        aria-hidden="true"
+      />
+      </NuxtLink>
+      <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800"
+      >{{ cart.items.length.toString() }}</span
+      >  
+    </div>
     <div class="flex justify-center">
       <NuxtLink to="/" class="text-black text-md font-semibold">Caleb S. Lewis Photography</NuxtLink>
       <!-- <h1 class="text-black text-md font-semibold">
@@ -22,8 +32,8 @@
         class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8"
       >
         <div 
-          v-for="samplePhoto in photoCatalog.getPhotossByGalleryID(0)" 
-          :key="samplePhoto.imageUrl" 
+          v-for="samplePhoto in photoCatalog.ncPhotos" 
+          :key="samplePhoto._id" 
           class="relative" >
           <li>
           <div
@@ -51,11 +61,11 @@
           >
             <div class="grid grid-cols-12">
               <div class="col-span-7 items-start text-xs">
-                {{ samplePhoto.size }}
+                ${{ samplePhoto.price }}
               </div>
               
               <div class="col-span-5 items-end">                                   
-                <button @click="addToCart(samplePhoto.id)" class=" text-xs text-[#159243]">
+                <button @click="addToCart(samplePhoto._id)" class=" text-xs text-[#159243]">
                   <nuxt-icon name="MdiCartOutline" class="text-[#159243] h-3 w-3 inline-block pr-1" />
                   Add to cart  
                 </button>                
@@ -77,17 +87,24 @@
 </template>
 
 <script setup lang="ts">
+import { ShoppingBagIcon } from '@heroicons/vue/24/outline';
+import type { Id } from '~/convex/_generated/dataModel';
 import { useCatalogStore } from '../stores/catalog';
-import { cartStore } from '../stores/cart';
+import { useCartStore } from '../stores/cart';
 
 const photoCatalog = useCatalogStore();
-const cart = cartStore();
+const cart = useCartStore();
+
+// Load NC photos when component mounts
+onMounted(() => {
+  photoCatalog.loadNCPhotos();
+});
 
 const isChecked = ref(false);
 
-const addToCart = (ID: number) => {
+const addToCart = async (photoId: Id<'photos'>) => {
   console.log('entered addToCart method');
-  cart.addToCart(photoCatalog.samplePhotos[ID].title);
+  await cart.addToCart(photoId, 1);
   console.log('cart', cart);
 };
 

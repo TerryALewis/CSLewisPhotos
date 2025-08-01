@@ -3,6 +3,10 @@ import { resolve } from 'path';
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  devServer: {
+    port: 3000,
+    host: 'localhost',
+  },
   alias: {
     '@': resolve(__dirname, './src'),
   },
@@ -12,9 +16,10 @@ export default defineNuxtConfig({
     public: {
       stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
       domain: process.env.NUXT_PUBLIC_DOMAIN,
+      convexUrl: process.env.CONVEX_URL,
     },
   },
-
+  plugins: ['~/plugins/convex.client.ts'],
   modules: [
     [
       // ...

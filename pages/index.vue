@@ -82,7 +82,7 @@
                 <div class="py-1">
                   <MenuItem v-slot="{ active }">
                     <NuxtLink
-                      to="/galleries/1-0"
+                      to="/ncgallery"
                       :class="[
                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                         'block px-4 py-2 text-sm',
@@ -92,7 +92,7 @@
                   </MenuItem>
                   <MenuItem v-slot="{ active }">
                     <NuxtLink
-                      to="/galleries/2-0"
+                      to="/txgallery"
                       :class="[
                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                         'block px-4 py-2 text-sm',

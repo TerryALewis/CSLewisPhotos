@@ -78,10 +78,10 @@
 
 <script setup>
 import { CheckIcon } from '@heroicons/vue/20/solid';
-import { cartStore } from '../stores/cart';
+import { useCartStore } from '../stores/cart';
 
 const route = useRoute();
-const cart = cartStore();
+const cart = useCartStore();
 
 const sessionData = ref(null);
 const loading = ref(true);
@@ -102,8 +102,7 @@ onMounted(async () => {
       sessionData.value = data;
 
       // Clear the cart since payment was successful
-      cart.items.splice(0);
-      cart.updateCartSummary();
+      await cart.clearCart();
     } catch (err) {
       console.error('Error fetching session:', err);
       error.value = 'Unable to retrieve order details';
@@ -112,9 +111,8 @@ onMounted(async () => {
   loading.value = false;
 });
 
-const clearCartAndRedirect = () => {
-  cart.items.splice(0);
-  cart.updateCartSummary();
+const clearCartAndRedirect = async () => {
+  await cart.clearCart();
   navigateTo('/');
 };
 </script>

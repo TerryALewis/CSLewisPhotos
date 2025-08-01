@@ -153,90 +153,21 @@
               </a>
             </div>
 
-            <!-- Flyout menus -->
-            <PopoverGroup class="hidden lg:ml-8 lg:block lg:self-stretch">
-              <div class="flex h-full space-x-8">
-                <Popover
-                  v-for="category in navigation.categories"
-                  :key="category.name"
-                  class="flex"
-                  v-slot="{ open }"
-                >
-                  <div class="relative flex">
-                    <PopoverButton
-                      :class="[
-                        open
-                          ? 'border-[#159243] text-[#159243]'
-                          : 'border-transparent text-gray-700 hover:text-gray-800',
-                        'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out',
-                      ]"
-                      >{{ category.name }}</PopoverButton
-                    >
-                  </div>
-
-                  <transition
-                    enter-active-class="transition ease-out duration-200"
-                    enter-from-class="opacity-0"
-                    enter-to-class="opacity-100"
-                    leave-active-class="transition ease-in duration-150"
-                    leave-from-class="opacity-100"
-                    leave-to-class="opacity-0"
-                  >
-                    <PopoverPanel
-                      class="absolute inset-x-0 top-full z-10 text-sm text-gray-500"
-                    >
-                      <!-- Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow -->
-                      <div
-                        class="absolute inset-0 top-1/2 bg-white shadow"
-                        aria-hidden="true"
-                      />
-
-                      <div class="relative bg-white grid grid-cols-2">
-                        <div class="mx-auto max-w-7xl px-8 grid col-start-1">
-                          <div class="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
-                            <div class="col-start-1 grid grid-cols-2 gap-x-8">
-                              <div
-                                v-for="item in category.featured"
-                                :key="item.name"
-                                class="group relative text-base sm:text-sm"
-                              >
-                                <div
-                                  class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75"
-                                >
-                                  <img
-                                    :src="item.imageUrl"
-                                    :alt="item.imageAlt"
-                                    class="object-cover object-center"
-                                  />
-                                </div>
-                                <a
-                                  :href="item.href"
-                                  class="mt-2 mb-4 block font-medium text-gray-900"
-                                >
-                                  <span
-                                    class="absolute inset-0 z-10"
-                                    aria-hidden="true"
-                                  />
-                                  {{ item.name }}
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </PopoverPanel>
-                  </transition>
-                </Popover>
-
-                <a
-                  v-for="page in navigation.pages"
-                  :key="page.name"
-                  :href="page.href"
-                  class="flex items-center text-sm font-medium text-[#159243] hover:text-[#159243]"
-                  >{{ page.name }}</a
-                >
-              </div>
-            </PopoverGroup>
+            <!-- Direct navigation links -->
+            <div class="hidden lg:ml-8 lg:flex lg:items-center lg:space-x-8">
+              <NuxtLink
+                to="/ncgallery"
+                class="border-transparent text-gray-700 hover:text-gray-800 hover:border-[#159243] border-b-2 pb-1 text-sm font-medium transition-colors duration-200 ease-out"
+              >
+                North Carolina
+              </NuxtLink>
+              <NuxtLink
+                to="/txgallery"
+                class="border-transparent text-gray-700 hover:text-gray-800 hover:border-[#159243] border-b-2 pb-1 text-sm font-medium transition-colors duration-200 ease-out"
+              >
+                Texas
+              </NuxtLink>
+            </div>
 
             <div class="ml-auto flex items-center">
               <div
@@ -320,8 +251,8 @@
             >
               <div class="flex-shrink-0">
                 <img
-                  :src="item.imageUrl"
-                  :alt="item.title"
+                  :src="item.photo?.imageUrl || ''"
+                  :alt="item.photo?.title || 'Photo'"
                   class="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
                 />
               </div>
@@ -334,9 +265,9 @@
                     <div class="flex justify-between">
                       <h3 class="text-sm">
                         <a
-                          :href="item.imageUrl"
+                          :href="item.photo?.imageUrl || '#'"
                           class="font-medium text-gray-700 hover:text-gray-800"
-                          >{{ item.title }}</a
+                          >{{ item.photo?.title || 'Photo' }}</a
                         >
                       </h3>
                     </div>
@@ -347,17 +278,18 @@
                       </p>
                     </div>
                     <p class="mt-6 text-sm font-medium text-gray-900">
-                      $ {{ item.price }}
+                      $ {{ item.photo?.price || 0 }}
                     </p>
                   </div>
 
                   <div class="mt-4 sm:mt-0 sm:pr-9">
                     <label :for="`quantity-${itemIdx}`" class="sr-only"
-                      >Quantity, {{ item.title }}</label
+                      >Quantity, {{ item.photo?.title || 'Photo' }}</label
                     >
                     <select
                       :id="`quantity-${itemIdx}`"
                       :name="`quantity-${itemIdx}`"
+                      :value="item.quantity"
                       class="max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-[#159243] focus:outline-none focus:ring-1 focus:ring-[#159243] sm:text-sm"
                       @change="changeCartItemQty(itemIdx, $event.target.value)"
                     >
@@ -516,10 +448,6 @@ import { ref } from 'vue';
 import {
   Dialog,
   DialogPanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
   Tab,
   TabGroup,
   TabList,
@@ -541,8 +469,14 @@ import {
   XMarkIcon as XMarkIconMini,
 } from '@heroicons/vue/20/solid';
 
-import { cartStore } from '../stores/cart';
-const cart = cartStore();
+import { useCartStore } from '../stores/cart';
+const cart = useCartStore();
+
+// Initialize cart session on client side
+onMounted(() => {
+  cart.initializeSession();
+});
+
 //const cartItems = cart.items;
 
 const navigation = {
@@ -552,22 +486,10 @@ const navigation = {
       name: 'North Carolina',
       featured: [
         {
-          name: 'Mountains',
-          href: '/galleries/1-1',
-          imageSrc: 'samplePhotos/Mountain Cave.jpg',
-          imageAlt: 'The mountains of North Carolina',
-        },
-        {
-          name: 'Foothills',
-          href: '/galleries/1-2',
-          imageSrc: 'samplePhotos/Fog in the morning.jpg',
-          imageAlt: 'The foothills of North Carolina',
-        },
-        {
-          name: 'Coast',
-          href: '/galleries/1-4',
-          imageSrc: 'samplePhotos/Dunes at coast 2.jpg',
-          imageAlt: 'The coast along North Carolina',
+          name: 'NC Gallery',
+          href: '/ncgallery',
+          imageSrc: '/images/NCCoast.jpg',
+          imageAlt: 'North Carolina Gallery - Visit our NC photo collection',
         },
       ],
       sections: [
@@ -616,34 +538,10 @@ const navigation = {
       name: 'Texas',
       featured: [
         {
-          name: 'North/East Texas',
-          href: '/galleries/2-1',
-          imageSrc: 'samplePhotos/Dallas In The Distance.jpg',
-          imageAlt: 'Dallas on the horizon',
-        },
-        {
-          name: 'Panhandle',
-          href: '/galleries/2-1',
-          imageSrc: 'samplePhotos/Palo Duro Canyon.jpg',
-          imageAlt: 'Palo Duro Canyon in the panhandle of Texas',
-        },
-        {
-          name: 'Hill Country',
-          href: '/galleries/2-2',
-          imageSrc: 'samplePhotos/Texas Bluebonnets.jpg',
-          imageAlt: 'Bluebonnets in the hill country of Texas',
-        },
-        {
-          name: 'West Texas',
-          href: '/galleries/2-4',
-          imageSrc: 'samplePhotos/West Texas.jpg',
-          imageAlt: 'An area out in west Texas',
-        },
-        {
-          name: 'Coast',
-          href: '/galleries/2-3',
-          imageSrc: 'samplePhotos/Texas Coast.jpg',
-          imageAlt: 'Along the coast of Texas',
+          name: 'TX Gallery',
+          href: '/txgallery',
+          imageSrc: '/samplePhotos/Texas Bluebonnets.jpg',
+          imageAlt: 'Texas Gallery - Visit our TX photo collection',
         },
       ],
       sections: [
@@ -768,18 +666,31 @@ const open = ref(false);
 const isProcessingCheckout = ref(false);
 const checkoutError = ref('');
 
-const changeCartItemQty = (itemIdx, qty) => {
+const changeCartItemQty = async (itemIdx, qty) => {
   console.log('entered changeCartItemQty method');
   console.log('itemIdx to change: ', itemIdx.toString());
   console.log('qty to change to: ', qty.toString());
-  cart.updateQuantity(itemIdx, qty);
+
+  // Get the actual item from the cart using the index
+  const item = cart.items[itemIdx];
+  if (item && item._id) {
+    await cart.updateQuantity(item._id, parseInt(qty));
+    console.log('Updated quantity for item:', item._id);
+  }
   console.log('Cart Items: ', cart.items);
 };
 
-const removeCartItem = (itemIdx) => {
+const removeCartItem = async (itemIdx) => {
   console.log('entered removeCartItem method');
   console.log('itemIdx to remove: ', itemIdx.toString());
-  cart.removeItemFromCart(itemIdx);
+
+  // Get the actual item from the cart using the index
+  const itemToRemove = cart.items[itemIdx];
+  if (itemToRemove) {
+    console.log('Removing item with ID:', itemToRemove._id);
+    await cart.removeFromCart(itemToRemove._id);
+  }
+
   console.log('Cart Items: ', cart.items);
 };
 
@@ -798,11 +709,11 @@ const handleCheckout = async () => {
       method: 'POST',
       body: {
         items: cart.items.map((item) => ({
-          id: item.id,
-          title: item.title,
-          price: item.price,
+          id: item._id,
+          title: item.photo?.title || 'Photo',
+          price: item.photo?.price || 0,
           quantity: item.quantity,
-          imageUrl: item.imageUrl,
+          imageUrl: item.photo?.imageUrl || '',
           imageSize: item.imageSize,
         })),
       },

@@ -17,9 +17,10 @@ export default defineNuxtConfig({
       stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
       domain: process.env.NUXT_PUBLIC_DOMAIN,
       convexUrl: process.env.CONVEX_URL,
+      clerkPublishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     },
   },
-  plugins: ['~/plugins/convex.client.ts'],
+  plugins: ['~/plugins/convex.client.ts', '~/plugins/clerk.client.ts'],
   modules: [
     [
       // ...

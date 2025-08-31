@@ -5,16 +5,19 @@ This guide covers multiple methods to create a new branch from the main branch f
 ## Method 1: Using GitHub Web Interface (Easiest)
 
 ### Step 1: Navigate to Your Repository
+
 1. Go to your GitHub repository: `https://github.com/TerryALewis/CSLewisPhotos`
 2. Make sure you're on the **main** branch (check the branch dropdown on the left)
 
 ### Step 2: Create New Branch
+
 1. Click on the **branch dropdown** (shows "main" by default)
 2. Type your new branch name in the text field (e.g., `feature/new-gallery-layout`)
 3. Click **"Create branch: your-branch-name from 'main'"**
 4. GitHub will automatically switch you to the new branch
 
 ### Step 3: Start Working
+
 - You're now on your new branch
 - Any changes you make will be isolated from the main branch
 - You can edit files directly in GitHub or clone locally
@@ -22,6 +25,7 @@ This guide covers multiple methods to create a new branch from the main branch f
 ## Method 2: Using Git Commands Locally (Recommended for Development)
 
 ### Step 1: Ensure You're on Main Branch
+
 ```bash
 # Check current branch
 git branch
@@ -34,6 +38,7 @@ git pull origin main
 ```
 
 ### Step 2: Create and Switch to New Branch
+
 ```bash
 # Create new branch and switch to it (one command)
 git checkout -b feature/your-branch-name
@@ -44,6 +49,7 @@ git checkout feature/your-branch-name
 ```
 
 ### Step 3: Push New Branch to GitHub
+
 ```bash
 # Push the new branch to GitHub
 git push -u origin feature/your-branch-name
@@ -52,7 +58,9 @@ git push -u origin feature/your-branch-name
 ## Method 3: Using GitHub CLI (For Command Line Enthusiasts)
 
 ### Prerequisites
+
 Install GitHub CLI if not already installed:
+
 ```bash
 # macOS
 brew install gh
@@ -61,6 +69,7 @@ brew install gh
 ```
 
 ### Create Branch
+
 ```bash
 # Authenticate (first time only)
 gh auth login
@@ -79,6 +88,7 @@ git push -u origin feature/your-branch-name
 Use descriptive, consistent branch names:
 
 ### Feature Branches
+
 ```
 feature/user-authentication
 feature/payment-integration
@@ -87,6 +97,7 @@ feature/convex-database-migration
 ```
 
 ### Bug Fix Branches
+
 ```
 bugfix/cart-quantity-calculation
 bugfix/stripe-redirect-issue
@@ -94,6 +105,7 @@ bugfix/mobile-responsive-layout
 ```
 
 ### Hotfix Branches
+
 ```
 hotfix/security-vulnerability
 hotfix/payment-gateway-down
@@ -101,6 +113,7 @@ hotfix/critical-ui-bug
 ```
 
 ### Experimental Branches
+
 ```
 experiment/new-ui-framework
 experiment/performance-optimization
@@ -110,6 +123,7 @@ experiment/ai-photo-tagging
 ## Best Practices
 
 ### 1. Always Start from Updated Main
+
 ```bash
 git checkout main
 git pull origin main
@@ -117,6 +131,7 @@ git checkout -b your-new-branch
 ```
 
 ### 2. Use Descriptive Names
+
 - ✅ `feature/convex-integration`
 - ✅ `bugfix/cart-total-calculation`
 - ❌ `my-branch`
@@ -124,11 +139,13 @@ git checkout -b your-new-branch
 - ❌ `branch1`
 
 ### 3. Keep Branches Focused
+
 - One feature/fix per branch
 - Avoid mixing multiple unrelated changes
 - Makes code review easier
 
 ### 4. Regular Commits
+
 ```bash
 git add .
 git commit -m "Add cart quantity update functionality"
@@ -136,6 +153,7 @@ git push origin your-branch-name
 ```
 
 ### 5. Stay Updated with Main
+
 ```bash
 # Regularly merge main into your feature branch
 git checkout main
@@ -147,12 +165,14 @@ git merge main
 ## Working with Your New Branch
 
 ### Making Changes
+
 1. Edit files in your preferred editor
 2. Stage changes: `git add .`
 3. Commit changes: `git commit -m "Descriptive message"`
 4. Push to GitHub: `git push origin your-branch-name`
 
 ### Creating Pull Request
+
 1. Go to your GitHub repository
 2. You'll see a banner: "your-branch-name had recent pushes"
 3. Click **"Compare & pull request"**
@@ -161,7 +181,9 @@ git merge main
 6. Click **"Create pull request"**
 
 ### Merging Back to Main
+
 After code review and approval:
+
 1. Click **"Merge pull request"** in GitHub
 2. Choose merge type:
    - **Create a merge commit** (preserves branch history)
@@ -173,11 +195,13 @@ After code review and approval:
 ## Cleanup After Merge
 
 ### Delete Remote Branch (if not done automatically)
+
 ```bash
 git push origin --delete your-branch-name
 ```
 
 ### Delete Local Branch
+
 ```bash
 git checkout main
 git pull origin main
@@ -218,6 +242,7 @@ git diff
 ## Troubleshooting
 
 ### Branch Already Exists
+
 ```bash
 # If branch exists locally but not remotely
 git push -u origin existing-branch-name
@@ -227,6 +252,7 @@ git checkout -b branch-name origin/branch-name
 ```
 
 ### Merge Conflicts
+
 ```bash
 # When conflicts occur during merge
 git status  # Shows conflicted files
@@ -236,6 +262,7 @@ git commit -m "Resolve merge conflicts"
 ```
 
 ### Undo Last Commit (before push)
+
 ```bash
 git reset --soft HEAD~1  # Keep changes staged
 git reset --hard HEAD~1  # Discard changes completely

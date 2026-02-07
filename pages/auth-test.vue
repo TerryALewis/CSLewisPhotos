@@ -184,6 +184,32 @@ const publishableKey = computed(() => {
   return 'Not set';
 });
 
+// Convex mutation call after Clerk sign-in
+import { api } from '~/convex/_generated/api';
+const { $convex } = useNuxtApp();
+
+watch(isSignedIn, async (signed) => {
+  if (!process.client || !signed) return;
+  try {
+    // support both reactive shapes (user or user.value)
+    const u: any = user && (user as any).value ? (user as any).value : user;
+    const clerkId = u?.id;
+    const name = u?.fullName || '';
+    const email = u?.primaryEmailAddress?.emailAddress || '';
+    if (!clerkId) return;
+
+    await $convex.mutation((api as any).customers.upsertCustomer, {
+      clerkId,
+      name,
+      email,
+      createdAt: Date.now(),
+    });
+    console.log('upsertCustomer called for', clerkId);
+  } catch (e) {
+    console.error('Failed to upsert customer:', e);
+  }
+});
+
 definePageMeta({
   title: 'Clerk Auth Test',
 });

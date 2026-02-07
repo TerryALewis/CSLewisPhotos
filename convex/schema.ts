@@ -38,4 +38,11 @@ export default defineSchema({
     stripeSessionId: v.optional(v.string()),
     createdAt: v.number(),
   }).index('by_session', ['sessionId']),
+
+  customer: defineTable({
+    name: v.string(),
+    email: v.string(),
+    clerkId: v.string(),
+    createdAt: v.number(),
+  }).index('by_clerkId', ['clerkId']),
 });

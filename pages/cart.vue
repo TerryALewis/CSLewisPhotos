@@ -103,14 +103,22 @@
 
               <div class="space-y-6 border-t border-gray-200 px-4 py-6">
                 <div class="flow-root">
-                  <a href="#" class="-m-2 block p-2 font-medium text-[#159243]"
-                    >Sign in</a
-                  >
+                  <ClientOnly>
+                    <SignInButton
+                      class="-m-2 block p-2 font-medium text-[#159243]"
+                    >
+                      Sign in
+                    </SignInButton>
+                  </ClientOnly>
                 </div>
                 <div class="flow-root">
-                  <a href="#" class="-m-2 block p-2 font-medium text-[#159243]"
-                    >Create account</a
-                  >
+                  <ClientOnly>
+                    <SignUpButton
+                      class="-m-2 block p-2 font-medium text-[#159243]"
+                    >
+                      Create account
+                    </SignUpButton>
+                  </ClientOnly>
                 </div>
                 <div class="flow-root">
                   <NuxtLink
@@ -173,17 +181,19 @@
               <div
                 class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6"
               >
-                <a
-                  href="#"
-                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >Sign in</a
-                >
+                <ClientOnly>
+                  <SignInButton
+                    class="text-sm font-medium text-gray-700 hover:text-gray-800"
+                    >Sign in</SignInButton
+                  >
+                </ClientOnly>
                 <span class="h-6 w-px bg-gray-200" aria-hidden="true" />
-                <a
-                  href="#"
-                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >Create account</a
-                >
+                <ClientOnly>
+                  <SignUpButton
+                    class="text-sm font-medium text-gray-700 hover:text-gray-800"
+                    >Create account</SignUpButton
+                  >
+                </ClientOnly>
                 <span class="h-6 w-px bg-gray-200" aria-hidden="true" />
                 <!-- <NuxtLink
                   to="/"
@@ -471,6 +481,9 @@ import {
 
 import { useCartStore } from '../stores/cart';
 const cart = useCartStore();
+
+// Clerk UI components
+import { SignInButton, SignUpButton } from '@clerk/vue';
 
 // Initialize cart session on client side
 onMounted(() => {

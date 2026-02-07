@@ -3,7 +3,7 @@
     <div class="flex justify-end pt-1 pr-4">
       <NuxtLink to="/cart" class="text-black text-md font-semibold">
         <ShoppingBagIcon
-          class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+          class="h-6 w-6 flex-shrink-0 text-[#159243] group-hover:text-gray-500"
           aria-hidden="true"
         />
       </NuxtLink>
@@ -29,7 +29,7 @@
         <li
           v-for="samplePhoto in photoCatalog.getPhotosByGalleryIDAndOptionalCategory(
             galleryDesiredInt,
-            categoryDesiredInt
+            categoryDesiredInt,
           )"
           :key="samplePhoto.imageUrl"
           class="relative"

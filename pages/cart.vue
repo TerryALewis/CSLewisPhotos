@@ -102,24 +102,21 @@
               </TabGroup>
 
               <div class="space-y-6 border-t border-gray-200 px-4 py-6">
-                <div class="flow-root">
+                <!-- If signed in, show first name; otherwise show Sign In only -->
+                <div class="flow-root" v-if="isSignedIn && isSignedIn.value">
+                  <div class="-m-2 block p-2 font-medium text-[#159243]">
+                    {{ userFirstName || 'Account' }}
+                  </div>
+                </div>
+
+                <div class="flow-root" v-else>
                   <ClientOnly>
-                    <SignInButton
-                      class="-m-2 block p-2 font-medium text-[#159243]"
-                    >
+                    <SignInButton class="-m-2 block p-2 font-medium text-[#159243]">
                       Sign in
                     </SignInButton>
                   </ClientOnly>
                 </div>
-                <div class="flow-root">
-                  <ClientOnly>
-                    <SignUpButton
-                      class="-m-2 block p-2 font-medium text-[#159243]"
-                    >
-                      Create account
-                    </SignUpButton>
-                  </ClientOnly>
-                </div>
+
                 <div class="flow-root">
                   <NuxtLink
                     to="/"
@@ -181,25 +178,18 @@
               <div
                 class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6"
               >
-                <ClientOnly>
-                  <SignInButton
-                    class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                    >Sign in</SignInButton
-                  >
-                </ClientOnly>
+                <!-- If signed in show first name else show Sign In only (no Create account) -->
+                <template v-if="isSignedIn && isSignedIn.value">
+                  <span class="text-sm font-medium text-gray-700">{{ userFirstName }}</span>
+                </template>
+
+                <template v-else>
+                  <ClientOnly>
+                    <SignInButton class="text-sm font-medium text-gray-700 hover:text-gray-800">Sign in</SignInButton>
+                  </ClientOnly>
+                </template>
+
                 <span class="h-6 w-px bg-gray-200" aria-hidden="true" />
-                <ClientOnly>
-                  <SignUpButton
-                    class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                    >Create account</SignUpButton
-                  >
-                </ClientOnly>
-                <span class="h-6 w-px bg-gray-200" aria-hidden="true" />
-                <!-- <NuxtLink
-                  to="/"
-                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >Home</NuxtLink
-                > -->
               </div>
 
               <div class="flex mr-6 lg:mr-2 lg:ml-6">
@@ -450,11 +440,41 @@
         </div>
       </div>
     </footer>
+
+    <!-- Auth modal (client-only) -->
+    <ClientOnly>
+      <div
+        v-if="showAuthModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      >
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+          <h3 class="text-lg font-medium mb-4">
+            Please sign in to continue to checkout
+          </h3>
+          <div class="flex gap-3">
+            <SignInButton class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">
+              Sign In
+            </SignInButton>
+            <SignUpButton class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+              Create account
+            </SignUpButton>
+          </div>
+          <div class="mt-4 text-right">
+            <button
+              @click="showAuthModal = false"
+              class="text-sm text-gray-600"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </ClientOnly>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import {
   Dialog,
   DialogPanel,
@@ -482,15 +502,118 @@ import {
 import { useCartStore } from '../stores/cart';
 const cart = useCartStore();
 
-// Clerk UI components
-import { SignInButton, SignUpButton } from '@clerk/vue';
+// Clerk UI components + composable
+import { SignInButton, SignUpButton, useAuth, useUser } from '@clerk/vue';
+
+// Reactive helpers for auth modal and checkout state
+const open = ref(false);
+const isProcessingCheckout = ref(false);
+const checkoutError = ref('');
+const showAuthModal = ref(false);
+
+// Access Clerk auth state (client-only)
+const { isLoaded, isSignedIn } = process.client ? useAuth() : { isLoaded: ref(false), isSignedIn: ref(false) };
+const { user } = process.client ? useUser() : { user: ref(null) };
+const userFirstName = computed(() => (user && user.value && user.value.firstName) ? user.value.firstName : '');
 
 // Initialize cart session on client side
 onMounted(() => {
   cart.initializeSession();
 });
 
-//const cartItems = cart.items;
+// Move checkout logic into a reusable function
+const proceedToCheckout = async () => {
+  if (cart.items.length === 0) {
+    checkoutError.value = 'Your cart is empty';
+    return;
+  }
+
+  isProcessingCheckout.value = true;
+  checkoutError.value = '';
+
+  try {
+    // Create checkout session
+    const response = await $fetch('/api/create-checkout-session', {
+      method: 'POST',
+      body: {
+        items: cart.items.map((item) => ({
+          id: item._id,
+          title: item.photo?.title || 'Photo',
+          price: item.photo?.price || 0,
+          quantity: item.quantity,
+          imageUrl: item.photo?.imageUrl || '',
+          imageSize: item.imageSize,
+        })),
+      },
+    });
+
+    // Redirect to Stripe checkout
+    if (response.url) {
+      await navigateTo(response.url, { external: true });
+    } else {
+      throw new Error('No checkout URL received');
+    }
+  } catch (error) {
+    console.error('Checkout error:', error);
+    checkoutError.value = 'Failed to process checkout. Please try again.';
+  } finally {
+    isProcessingCheckout.value = false;
+  }
+};
+
+// Main handler invoked by the Checkout button
+const handleCheckout = async () => {
+  if (cart.items.length === 0) {
+    checkoutError.value = 'Your cart is empty';
+    return;
+  }
+
+  // If user is signed in, proceed
+  if (process.client && isSignedIn && isSignedIn.value) {
+    await proceedToCheckout();
+    return;
+  }
+
+  // Otherwise show auth modal and wait for sign-in
+  showAuthModal.value = true;
+};
+
+// When the user signs in (isSignedIn becomes true) and the auth modal is visible, continue to checkout
+watch(isSignedIn, async (signed) => {
+  if (process.client && signed && showAuthModal.value) {
+    showAuthModal.value = false;
+    // small delay to let Clerk finalize session
+    setTimeout(() => proceedToCheckout(), 250);
+  }
+});
+
+const changeCartItemQty = async (itemIdx, qty) => {
+  console.log('entered changeCartItemQty method');
+  console.log('itemIdx to change: ', itemIdx.toString());
+  console.log('qty to change to: ', qty.toString());
+
+  // Get the actual item from the cart using the index
+  const item = cart.items[itemIdx];
+  if (item && item._id) {
+    await cart.updateQuantity(item._id, parseInt(qty));
+    console.log('Updated quantity for item:', item._id);
+  }
+  console.log('Cart Items: ', cart.items);
+};
+
+const removeCartItem = async (itemIdx) => {
+  console.log('entered removeCartItem method');
+  console.log('itemIdx to remove: ', itemIdx.toString());
+
+  // Get the actual item from the cart using the index
+  const itemToRemove = cart.items[itemIdx];
+  if (itemToRemove) {
+    console.log('Removing item with ID:', itemToRemove._id);
+    await cart.removeFromCart(itemToRemove._id);
+  }
+
+  console.log('Cart Items: ', cart.items);
+};
 
 const navigation = {
   categories: [
@@ -673,76 +796,5 @@ const footerNavigation = {
     { name: 'FAQ', href: '#' },
     { name: 'Find a store', href: '#' },
   ],
-};
-
-const open = ref(false);
-const isProcessingCheckout = ref(false);
-const checkoutError = ref('');
-
-const changeCartItemQty = async (itemIdx, qty) => {
-  console.log('entered changeCartItemQty method');
-  console.log('itemIdx to change: ', itemIdx.toString());
-  console.log('qty to change to: ', qty.toString());
-
-  // Get the actual item from the cart using the index
-  const item = cart.items[itemIdx];
-  if (item && item._id) {
-    await cart.updateQuantity(item._id, parseInt(qty));
-    console.log('Updated quantity for item:', item._id);
-  }
-  console.log('Cart Items: ', cart.items);
-};
-
-const removeCartItem = async (itemIdx) => {
-  console.log('entered removeCartItem method');
-  console.log('itemIdx to remove: ', itemIdx.toString());
-
-  // Get the actual item from the cart using the index
-  const itemToRemove = cart.items[itemIdx];
-  if (itemToRemove) {
-    console.log('Removing item with ID:', itemToRemove._id);
-    await cart.removeFromCart(itemToRemove._id);
-  }
-
-  console.log('Cart Items: ', cart.items);
-};
-
-const handleCheckout = async () => {
-  if (cart.items.length === 0) {
-    checkoutError.value = 'Your cart is empty';
-    return;
-  }
-
-  isProcessingCheckout.value = true;
-  checkoutError.value = '';
-
-  try {
-    // Create checkout session
-    const response = await $fetch('/api/create-checkout-session', {
-      method: 'POST',
-      body: {
-        items: cart.items.map((item) => ({
-          id: item._id,
-          title: item.photo?.title || 'Photo',
-          price: item.photo?.price || 0,
-          quantity: item.quantity,
-          imageUrl: item.photo?.imageUrl || '',
-          imageSize: item.imageSize,
-        })),
-      },
-    });
-
-    // Redirect to Stripe checkout
-    if (response.url) {
-      await navigateTo(response.url, { external: true });
-    } else {
-      throw new Error('No checkout URL received');
-    }
-  } catch (error) {
-    console.error('Checkout error:', error);
-    checkoutError.value = 'Failed to process checkout. Please try again.';
-  } finally {
-    isProcessingCheckout.value = false;
-  }
 };
 </script>

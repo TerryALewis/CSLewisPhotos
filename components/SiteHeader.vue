@@ -4,9 +4,7 @@
       <div class="flex justify-between h-16 items-center">
         <div class="flex items-center">
           <NuxtLink to="/" class="flex-shrink-0 flex items-center">
-            <h1 :class="headerTextClass + ' text-xl font-bold'">
-              C.S. Lewis Photos
-            </h1>
+            <h1 :class="headerTextClass + ' text-xl font-bold'">C.S. Lewis Photos</h1>
           </NuxtLink>
         </div>
 
@@ -21,33 +19,14 @@
               :class="headerTextClass"
             >
               Galleries
-              <svg
-                class="-mr-1 ml-2 h-4 w-4"
-                :class="headerTextClass"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
+              <svg class="-mr-1 ml-2 h-4 w-4" :class="headerTextClass" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
-            <ul
-              v-if="showGalleries"
-              class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20"
-            >
+            <ul v-if="showGalleries" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
               <li v-for="g in galleriesLinks" :key="g.id">
-                <NuxtLink
-                  :to="g.href"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  @click="showGalleries = false"
-                >
+                <NuxtLink :to="g.href" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" @click="showGalleries = false">
                   {{ g.title }}
                 </NuxtLink>
               </li>
@@ -62,49 +41,41 @@
 
               <template v-else>
                 <template v-if="isSignedInBool">
-                  <NuxtLink
-                    to="/account"
-                    :class="
-                      headerTextClass +
-                      ' text-sm font-medium hover:text-gray-200'
-                    "
-                  >
-                    Welcome{{ userFirstName ? ', ' + userFirstName : '' }}
-                  </NuxtLink>
+                  <!-- Account dropdown -->
+                  <div class="relative">
+                    <button @click="showAccountMenu = !showAccountMenu" :class="headerTextClass + ' text-sm font-medium inline-flex items-center'">
+                      Welcome{{ userFirstName ? ', ' + userFirstName : '' }}
+                      <svg class="ml-2 h-4 w-4" :class="headerTextClass" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+
+                    <ul v-if="showAccountMenu" class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-30">
+                      <li>
+                        <NuxtLink to="/account" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" @click="showAccountMenu = false">Account</NuxtLink>
+                      </li>
+                      <li>
+                        <div class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                          <SignOutButton class="w-full text-left">Sign out</SignOutButton>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
                 </template>
                 <template v-else>
-                  <SignInButton
-                    :class="
-                      headerTextClass +
-                      ' text-sm font-medium hover:text-gray-200'
-                    "
-                    >Sign In</SignInButton
-                  >
+                  <SignInButton :class="headerTextClass + ' text-sm font-medium hover:text-gray-200'">Sign In</SignInButton>
                 </template>
               </template>
             </ClientOnly>
           </div>
 
           <div>
-            <NuxtLink
-              to="/"
-              :class="
-                headerTextClass + ' text-sm font-medium hover:text-gray-200'
-              "
-              >Home</NuxtLink
-            >
+            <NuxtLink to="/" :class="headerTextClass + ' text-sm font-medium hover:text-gray-200'">Home</NuxtLink>
           </div>
 
           <div>
-            <NuxtLink
-              to="/cart"
-              class="flex items-center text-sm font-medium hover:text-gray-200"
-            >
-              <ShoppingBagIcon
-                class="h-5 w-5 mr-2"
-                :class="headerTextClass"
-                aria-hidden="true"
-              />
+            <NuxtLink to="/cart" class="flex items-center text-sm font-medium hover:text-gray-200">
+              <ShoppingBagIcon class="h-5 w-5 mr-2" :class="headerTextClass" aria-hidden="true" />
               <span class="sr-only">Shopping cart</span>
               <span :class="headerTextClass">{{ cartCount }}</span>
             </NuxtLink>
@@ -117,15 +88,13 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { SignInButton, useAuth, useUser } from '@clerk/vue';
+import { SignInButton, useAuth, useUser, SignOutButton } from '@clerk/vue';
 import { ShoppingBagIcon } from '@heroicons/vue/24/outline';
 import { useCartStore } from '~/stores/cart';
 import { useCatalogStore } from '~/stores/catalog';
 import { useRoute } from 'vue-router';
 
-const auth = process.client
-  ? useAuth()
-  : { isLoaded: ref(false), isSignedIn: ref(false) };
+const auth = process.client ? useAuth() : { isLoaded: ref(false), isSignedIn: ref(false) };
 const userRes = process.client ? useUser() : { user: ref(null) };
 
 function unwrap(x: any) {
@@ -146,6 +115,7 @@ const cart = useCartStore();
 const cartCount = computed(() => cart.items.length);
 
 const showGalleries = ref(false);
+const showAccountMenu = ref(false);
 
 const route = useRoute();
 

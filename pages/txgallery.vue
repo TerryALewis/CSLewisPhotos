@@ -13,9 +13,9 @@
       >
     </div>
     <div class="flex justify-center">
-      <NuxtLink to="/" class="text-black text-md font-semibold"
+      <!-- <NuxtLink to="/" class="text-black text-md font-semibold"
         >Caleb S. Lewis Photography</NuxtLink
-      >
+      > -->
     </div>
     <div class="py-2 border border-b-2 border-b-gray-400 flex justify-center">
       <h2 class="text-[#159243] text-5xl font-semibold">Texas Photo Catalog</h2>

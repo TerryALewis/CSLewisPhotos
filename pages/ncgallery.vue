@@ -13,9 +13,9 @@
       >
     </div>
     <div class="flex justify-center">
-      <NuxtLink to="/" class="text-black text-md font-semibold"
-        >Caleb S. Lewis Photography</NuxtLink
-      >
+      <!-- <NuxtLink to="/" class="text-black text-md font-semibold"
+        >Caleb Sa. Lewis Photography</NuxtLink
+      > -->
       <!-- <h1 class="text-black text-md font-semibold">
         
         Caleb S. Lewis Photography

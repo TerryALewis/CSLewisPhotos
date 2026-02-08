@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-gray-200 h-screen">
-    <div class="flex justify-end pt-1 pr-4">
-      <NuxtLink to="/cart" class="text-black text-md font-semibold">
+  <div class="bg-gray-200 h-screen pt-20 sm:pt-8">
+    <div class="hidden sm:flex justify-end pt-1 pr-4">
+      <!-- <NuxtLink to="/cart" class="text-black text-md font-semibold">
         <ShoppingBagIcon
           class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
           aria-hidden="true"
@@ -10,7 +10,7 @@
       <span
         class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800"
         >{{ cart.items.length.toString() }}</span
-      >
+      > -->
     </div>
     <div class="flex justify-center">
       <!-- <NuxtLink to="/" class="text-black text-md font-semibold"

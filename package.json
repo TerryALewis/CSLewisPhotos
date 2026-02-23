@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "ensure-convex-generated": "node ./scripts/ensure-convex-generated.js",
+    "ensure-convex-generated": "node ./scripts/ensure-convex-generated.cjs",
     "convex:gen": "npx convex build || npx convex generate || npx convex dev --no-watch",
     "prebuild": "npm run ensure-convex-generated",
     "build": "nuxt build",

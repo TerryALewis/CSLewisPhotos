@@ -1,5 +1,4 @@
-// Nuxt middleware for Clerk authentication
-// This will run on pages that require authentication
+// Auth middleware replaced by client-side plugin (plugins/auth.client.ts)
+// No exported middleware to avoid server/Edge invocation.
 
-// Removed server-side auth middleware in favor of client-side router guard plugin (plugins/auth.client.ts)
-export default defineNuxtRouteMiddleware(() => {});
+// intentionally empty

@@ -10,15 +10,23 @@ if (existsSync(generatedDir)) {
   process.exit(0);
 }
 
-const hasConvexEnv = !!(process.env.CONVEX_URL || process.env.CONVEX_DEPLOYMENT);
+const hasConvexEnv = !!(
+  process.env.CONVEX_URL || process.env.CONVEX_DEPLOYMENT
+);
 
 if (!hasConvexEnv) {
-  console.warn('convex/_generated is missing and no Convex env variables found (CONVEX_URL or CONVEX_DEPLOYMENT).');
-  console.warn('Skipping convex generation. If the build still needs convex/_generated, set CONVEX_URL or commit convex/_generated to the repo.');
+  console.warn(
+    'convex/_generated is missing and no Convex env variables found (CONVEX_URL or CONVEX_DEPLOYMENT).',
+  );
+  console.warn(
+    'Skipping convex generation. If the build still needs convex/_generated, set CONVEX_URL or commit convex/_generated to the repo.',
+  );
   process.exit(0);
 }
 
-console.log('Attempting to run `npx convex build` to generate convex/_generated...');
+console.log(
+  'Attempting to run `npx convex build` to generate convex/_generated...',
+);
 
 const res = spawnSync('npx', ['convex', 'build'], { stdio: 'inherit' });
 

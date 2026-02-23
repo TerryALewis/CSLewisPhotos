@@ -72,9 +72,10 @@
                     </NuxtLink>
                   </template>
                   <template v-else>
-                    <SignInButton
+                    <component
+                      :is="SignInButtonComp"
                       class="text-sm font-medium text-gray-700 hover:text-gray-900"
-                      >Sign In</SignInButton
+                      >Sign In</component
                     >
                   </template>
                 </template>
@@ -144,18 +145,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { SignInButton } from '@clerk/vue';
-import { useAuth, useUser } from '@clerk/vue';
+import { ref, computed, onMounted, watch } from 'vue';
+// removed static Clerk imports to avoid server bundling
+// import { SignInButton } from '@clerk/vue';
+// import { useAuth, useUser } from '@clerk/vue';
 import { ShoppingBagIcon } from '@heroicons/vue/24/outline';
 import { useCartStore } from '~/stores/cart';
 import { useCatalogStore } from '~/stores/catalog';
 
-// client-side Clerk composables
-const auth = process.client
-  ? useAuth()
-  : { isLoaded: ref(false), isSignedIn: ref(false) };
-const userRes = process.client ? useUser() : { user: ref(null) };
+// client-side Clerk composables and components (populated onMounted)
+const SignInButtonComp = ref<any>(null);
+let authRef: any = null;
+let userRef: any = null;
+const isLoadedRef = ref(false);
+const isSignedInRef = ref(false);
+const userFirstNameRef = ref('');
+
+onMounted(async () => {
+  try {
+    const mod = await import('@clerk/vue');
+    SignInButtonComp.value = mod.SignInButton;
+    authRef = mod.useAuth();
+    userRef = mod.useUser();
+
+    // initialize values
+    isLoadedRef.value = !!authRef.isLoaded?.value;
+    isSignedInRef.value = !!authRef.isSignedIn?.value;
+    userFirstNameRef.value =
+      (userRef.user?.value && userRef.user.value.firstName) || '';
+
+    // watch for changes
+    if (authRef.isLoaded)
+      watch(
+        () => authRef.isLoaded.value,
+        (v) => (isLoadedRef.value = !!v),
+      );
+    if (authRef.isSignedIn)
+      watch(
+        () => authRef.isSignedIn.value,
+        (v) => (isSignedInRef.value = !!v),
+      );
+    if (userRef.user)
+      watch(
+        () => userRef.user.value,
+        (u) => (userFirstNameRef.value = (u && u.firstName) || ''),
+      );
+  } catch (e) {
+    // Clerk not available on server or not installed; keep defaults
+    // eslint-disable-next-line no-console
+    console.warn('Clerk dynamic import failed in layout:', e);
+  }
+});
+
+// expose values with template-safe names
+const isLoaded = isLoadedRef;
+const isSignedInBool = computed(() => isSignedInRef.value);
+const userFirstName = computed(() => userFirstNameRef.value);
 
 // helper to unwrap either a ref or a plain value
 function unwrap(x: any) {
@@ -163,14 +208,6 @@ function unwrap(x: any) {
   return x;
 }
 
-const isLoaded = computed(() => !!unwrap(auth.isLoaded));
-const isSignedInBool = computed(() => !!unwrap(auth.isSignedIn));
-const userFirstName = computed(() => {
-  const u = unwrap(userRes.user);
-  return u && u.firstName ? u.firstName : '';
-});
-
-// Galleries and cart
 const catalog = useCatalogStore();
 const galleriesLinks = computed(() => catalog.getGalleriesLinks);
 const cart = useCartStore();

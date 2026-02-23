@@ -10,7 +10,9 @@
           </div>
           <div class="flex items-center space-x-4">
             <ClientOnly>
-              <UserButton />
+              <template v-if="UserButton">
+                <component :is="UserButton" />
+              </template>
               <template #fallback>
                 <div
                   class="h-8 w-8 bg-gray-200 rounded-full animate-pulse"
@@ -39,11 +41,19 @@
               <p class="text-sm text-gray-500 mb-6">
                 You need to be signed in to access your account dashboard.
               </p>
-              <SignInButton
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Sign In
-              </SignInButton>
+              <template v-if="SignInButton">
+                <component
+                  :is="SignInButton"
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Sign In
+                </component>
+              </template>
+              <template v-else>
+                <div
+                  class="h-10 w-full bg-gray-200 rounded animate-pulse"
+                ></div>
+              </template>
             </div>
           </div>
         </div>
@@ -238,16 +248,71 @@
 </template>
 
 <script setup lang="ts">
-import { SignInButton, UserButton } from '@clerk/vue';
-import { useAuth, useUser } from '@clerk/vue';
+import { ref, onMounted, computed } from 'vue';
+import { useNuxtApp } from '#app';
 
-// Only access these on client side to prevent SSR issues
-const { isLoaded, isSignedIn } = process.client
-  ? useAuth()
-  : { isLoaded: ref(false), isSignedIn: ref(false) };
-const { user } = process.client ? useUser() : { user: ref(null) };
+const isLoadedRef: any = ref(false);
+let isSignedInRef: any = ref(false);
+let userRef: any = ref(null);
+const UserButtonComp = ref<any>(null);
+const SignInButtonComp = ref<any>(null);
+const SignOutButtonComp = ref<any>(null);
 
-definePageMeta({
-  title: 'Account Dashboard',
-});
+const nuxtApp = useNuxtApp();
+
+if (process.client) {
+  onMounted(async () => {
+    try {
+      const clerkClient = (nuxtApp as any).$clerkClient;
+      if (clerkClient) {
+        UserButtonComp.value = clerkClient.UserButton ?? null;
+        SignInButtonComp.value = clerkClient.SignInButton ?? null;
+        SignOutButtonComp.value = clerkClient.SignOutButton ?? null;
+
+        const auth = clerkClient.useAuth();
+        const u = clerkClient.useUser();
+
+        if (auth?.isLoaded) {
+          isLoadedRef.value = auth.isLoaded.value;
+          (isLoadedRef as any) = auth.isLoaded;
+        }
+        if (auth?.isSignedIn) {
+          isSignedInRef = auth.isSignedIn;
+        }
+        if (u?.user) {
+          userRef = u.user;
+        }
+      } else {
+        // Fallback to dynamic import if plugin-provided client not available
+        const mod = await import('@clerk/vue');
+        UserButtonComp.value = mod.UserButton ?? null;
+        SignInButtonComp.value = mod.SignInButton ?? null;
+        SignOutButtonComp.value = mod.SignOutButton ?? null;
+
+        const auth = mod.useAuth();
+        const u = mod.useUser();
+
+        if (auth?.isLoaded) {
+          isLoadedRef.value = auth.isLoaded.value;
+          (isLoadedRef as any) = auth.isLoaded;
+        }
+        if (auth?.isSignedIn) {
+          isSignedInRef = auth.isSignedIn;
+        }
+        if (u?.user) {
+          userRef = u.user;
+        }
+      }
+    } catch (err) {
+      console.warn('Clerk dynamic import failed on account page:', err);
+    }
+  });
+}
+
+const isLoaded = isLoadedRef;
+const isSignedIn = computed(() => isSignedInRef?.value ?? false);
+const user = computed(() => userRef?.value ?? null);
+const UserButton = UserButtonComp;
+const SignInButton = SignInButtonComp;
+const SignOutButton = SignOutButtonComp;
 </script>

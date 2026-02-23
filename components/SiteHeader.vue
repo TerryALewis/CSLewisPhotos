@@ -58,7 +58,10 @@
 
           <div>
             <ClientOnly>
-              <template v-if="!isLoaded">
+              <!-- Show skeleton until Clerk client and components are ready -->
+              <template
+                v-if="!SignInButtonComp || !SignOutButtonComp || !isLoaded"
+              >
                 <div class="h-8 w-20 bg-gray-200 rounded animate-pulse" />
               </template>
 
@@ -107,8 +110,10 @@
                         <div
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         >
-                          <SignOutButton class="w-full text-left"
-                            >Sign out</SignOutButton
+                          <component
+                            :is="SignOutButtonComp"
+                            class="w-full text-left"
+                            >Sign out</component
                           >
                         </div>
                       </li>
@@ -116,12 +121,13 @@
                   </div>
                 </template>
                 <template v-else>
-                  <SignInButton
+                  <component
+                    :is="SignInButtonComp"
                     :class="
                       headerTextClass +
                       ' text-sm font-medium hover:text-gray-200'
                     "
-                    >Sign In</SignInButton
+                    >Sign In</component
                   >
                 </template>
               </template>
@@ -202,7 +208,14 @@
               </ul>
 
               <ClientOnly>
-                <template v-if="isSignedInBool">
+                <!-- Mobile: show skeleton until Client components and Clerk state ready -->
+                <template
+                  v-if="!SignInButtonComp || !SignOutButtonComp || !isLoaded"
+                >
+                  <div class="h-8 w-full bg-gray-200 rounded animate-pulse" />
+                </template>
+
+                <template v-else-if="isSignedInBool">
                   <!-- Mobile: Welcome acts as toggle for account actions -->
                   <button
                     @click="showMobileAccount = !showMobileAccount"
@@ -221,16 +234,20 @@
                     </li>
                     <li>
                       <div class="py-2">
-                        <SignOutButton class="w-full text-left"
-                          >Sign out</SignOutButton
+                        <component
+                          :is="SignOutButtonComp"
+                          class="w-full text-left"
+                          >Sign out</component
                         >
                       </div>
                     </li>
                   </ul>
                 </template>
                 <template v-else>
-                  <SignInButton class="block w-full text-left py-2"
-                    >Sign In</SignInButton
+                  <component
+                    :is="SignInButtonComp"
+                    class="block w-full text-left py-2"
+                    >Sign In</component
                   >
                 </template>
               </ClientOnly>
@@ -256,29 +273,70 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { SignInButton, useAuth, useUser, SignOutButton } from '@clerk/vue';
+import { ref, computed, onMounted } from 'vue';
+import { useNuxtApp } from '#app';
+// remove static Clerk imports to avoid server bundling
+// import { SignInButton, useAuth, useUser, SignOutButton } from '@clerk/vue';
 import { ShoppingBagIcon, Bars3Icon } from '@heroicons/vue/24/outline';
 import { useCartStore } from '~/stores/cart';
 import { useCatalogStore } from '~/stores/catalog';
 import { useRoute } from 'vue-router';
 
-const auth = process.client
-  ? useAuth()
-  : { isLoaded: ref(false), isSignedIn: ref(false) };
-const userRes = process.client ? useUser() : { user: ref(null) };
+// client-side Clerk components/composables
+const SignInButtonComp = ref<any>(null);
+const SignOutButtonComp = ref<any>(null);
+let authRef: any = null;
+let userRef: any = null;
+let isLoadedRef: any = ref(false);
+let isSignedInRef: any = ref(false);
+let userFirstNameRef: any = ref('');
 
-function unwrap(x: any) {
-  if (x && typeof x === 'object' && 'value' in x) return x.value;
-  return x;
-}
+const nuxtApp = useNuxtApp();
 
-const isLoaded = computed(() => !!unwrap(auth.isLoaded));
-const isSignedInBool = computed(() => !!unwrap(auth.isSignedIn));
-const userFirstName = computed(() => {
-  const u = unwrap(userRes.user);
-  return u && u.firstName ? u.firstName : '';
+onMounted(async () => {
+  if (!process.client) return;
+
+  const clerkClient = (nuxtApp as any).$clerkClient;
+
+  try {
+    if (clerkClient) {
+      // Use provided Clerk exports from the Nuxt plugin (avoids duplicate module instances)
+      SignInButtonComp.value = clerkClient.SignInButton ?? null;
+      SignOutButtonComp.value = clerkClient.SignOutButton ?? null;
+
+      const auth = clerkClient.useAuth();
+      const u = clerkClient.useUser();
+
+      if (auth?.isLoaded) isLoadedRef = auth.isLoaded;
+      if (auth?.isSignedIn) isSignedInRef = auth.isSignedIn;
+      if (u?.user)
+        userFirstNameRef = computed(() => u.user?.value?.firstName ?? '');
+    } else {
+      // Fallback: dynamic import (rare), but avoid calling useAuth before plugin install
+      const mod = await import('@clerk/vue');
+      SignInButtonComp.value = mod.SignInButton ?? null;
+      SignOutButtonComp.value = mod.SignOutButton ?? null;
+
+      const auth = mod.useAuth();
+      const u = mod.useUser();
+
+      if (auth?.isLoaded) isLoadedRef = auth.isLoaded;
+      if (auth?.isSignedIn) isSignedInRef = auth.isSignedIn;
+      if (u?.user)
+        userFirstNameRef = computed(() => u.user?.value?.firstName ?? '');
+    }
+  } catch (e) {
+    console.warn('Clerk dynamic import failed in SiteHeader:', e);
+  }
 });
+
+const isLoaded = isLoadedRef;
+const isSignedInBool = computed(() => isSignedInRef?.value ?? false);
+const userFirstName = computed(() =>
+  typeof userFirstNameRef.value === 'function'
+    ? userFirstNameRef.value()
+    : userFirstNameRef.value,
+);
 
 const catalog = useCatalogStore();
 const galleriesLinks = computed(() => catalog.getGalleriesLinks);

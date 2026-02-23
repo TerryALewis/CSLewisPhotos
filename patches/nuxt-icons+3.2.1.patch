@@ -1,0 +1,32 @@
+diff --git a/node_modules/nuxt-icons/dist/runtime/components/nuxt-icon.vue b/node_modules/nuxt-icons/dist/runtime/components/nuxt-icon.vue
+index 464d542..7f37c5b 100644
+--- a/node_modules/nuxt-icons/dist/runtime/components/nuxt-icon.vue
++++ b/node_modules/nuxt-icons/dist/runtime/components/nuxt-icon.vue
+@@ -21,12 +21,14 @@ let hasStroke = false
+ async function getIcon () {
+   try {
+     const iconsImport = import.meta.glob('assets/icons/**/**.svg', {
+-      as: 'raw',
++      query: '?raw',
++      import: 'default',
+       eager: false
+     })
+-    const rawIcon = await iconsImport[`/assets/icons/${props.name}.svg`]()
+-    if (rawIcon.includes('stroke')) { hasStroke = true }
+-    icon.value = rawIcon
++    const importer = iconsImport[`/assets/icons/${props.name}.svg`]
++    const rawIcon = importer ? await importer() : null
++    if (typeof rawIcon === 'string' && rawIcon.includes('stroke')) { hasStroke = true }
++    icon.value = typeof rawIcon === 'string' ? rawIcon : ''
+   } catch {
+     console.error(
+       `[nuxt-icons] Icon '${props.name}' doesn't exist in 'assets/icons'`
+@@ -34,7 +36,7 @@ async function getIcon () {
+   }
+ }
+ 
+-await getIcon()
++getIcon()
+ 
+ watchEffect(getIcon)
+ </script>

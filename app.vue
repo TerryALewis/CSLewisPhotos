@@ -1,6 +1,15 @@
 <template>
-  <NuxtPage />
-  <!-- <div class="flex h-screen items-center justify-center">
-    <H1 class="text-blue-500 text-2xl font-bold">Hi there, this is Nuxt</H1>
-  </div> -->
+  <div>
+    <!-- Main App Layout -->
+    <SiteHeader />
+    <NuxtPage />
+  </div>
 </template>
+
+<script setup lang="ts">
+import SiteHeader from '~/components/SiteHeader.vue';
+</script>
+
+<style>
+/* Global styles can go here */
+</style>

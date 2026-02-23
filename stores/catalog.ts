@@ -64,6 +64,22 @@ export const useCatalogStore = defineStore('catalog', () => {
     }
   };
 
+  // Helper: find gallery by numeric id
+  const getGalleryByID = (id: number) => {
+    return galleries.value.find((g) => g.id === id) || null;
+  };
+
+  // Helper: return photos for a gallery; optional category filter not used here but accepted
+  const getPhotosByGalleryIDAndOptionalCategory = (
+    galleryId: number,
+    _categoryId?: number
+  ) => {
+    // For now map galleryId 1 -> NC, 2 -> TX
+    if (galleryId === 1) return ncPhotos.value;
+    if (galleryId === 2) return txPhotos.value;
+    return [...ncPhotos.value, ...txPhotos.value];
+  };
+
   return {
     ncPhotos,
     txPhotos,
@@ -72,5 +88,8 @@ export const useCatalogStore = defineStore('catalog', () => {
     getGalleriesLinks,
     loadNCPhotos,
     loadTXPhotos,
+    // new helpers
+    getGalleryByID,
+    getPhotosByGalleryIDAndOptionalCategory,
   };
 });

@@ -1,8 +1,10 @@
+// backup of nuxt.config.ts
+// Created before adding compatibilityDate
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { resolve } from 'path';
 
 export default defineNuxtConfig({
-  compatibilityDate: '2025-09-19',
   devtools: { enabled: true },
   devServer: {
     port: 3000,
@@ -18,29 +20,11 @@ export default defineNuxtConfig({
       stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
       domain: process.env.NUXT_PUBLIC_DOMAIN,
       convexUrl: process.env.CONVEX_URL,
-      clerkPublishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     },
   },
+
   plugins: ['~/plugins/convex.client.ts', '~/plugins/clerk.client.ts'],
   modules: [
-    [
-      // ...
-      '@pinia/nuxt',
-      {
-        autoImports: ['defineStore', 'acceptHMRUpdate'],
-      },
-    ],
-    'nuxt-icons',
-    'nuxt-headlessui',
+    // modules...
   ],
-  imports: {
-    dirs: ['stores'],
-  },
-  css: ['/assets/css/main.css'],
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
-  },
 });

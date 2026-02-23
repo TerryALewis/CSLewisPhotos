@@ -64,12 +64,18 @@
 
                 <template v-else>
                   <template v-if="isSignedInBool">
-                    <NuxtLink to="/account" class="text-sm font-medium text-gray-700 hover:text-gray-900">
+                    <NuxtLink
+                      to="/account"
+                      class="text-sm font-medium text-gray-700 hover:text-gray-900"
+                    >
                       Welcome{{ userFirstName ? ', ' + userFirstName : '' }}
                     </NuxtLink>
                   </template>
                   <template v-else>
-                    <SignInButton class="text-sm font-medium text-gray-700 hover:text-gray-900">Sign In</SignInButton>
+                    <SignInButton
+                      class="text-sm font-medium text-gray-700 hover:text-gray-900"
+                      >Sign In</SignInButton
+                    >
                   </template>
                 </template>
               </ClientOnly>
@@ -146,7 +152,9 @@ import { useCartStore } from '~/stores/cart';
 import { useCatalogStore } from '~/stores/catalog';
 
 // client-side Clerk composables
-const auth = process.client ? useAuth() : { isLoaded: ref(false), isSignedIn: ref(false) };
+const auth = process.client
+  ? useAuth()
+  : { isLoaded: ref(false), isSignedIn: ref(false) };
 const userRes = process.client ? useUser() : { user: ref(null) };
 
 // helper to unwrap either a ref or a plain value

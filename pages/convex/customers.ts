@@ -1,34 +1,11 @@
-import { mutation } from './_generated/server';
-import { v } from 'convex/values';
+import { api } from '~/convex/_generated/api';
 
-export const upsertCustomer = mutation({
-  args: {
-    clerkId: v.string(),
-    name: v.string(),
-    email: v.string(),
-    createdAt: v.number(),
-  },
-  handler: async (ctx, args) => {
-    // Try to find existing customer by clerkId using the index
-    const existing = await ctx.db
-      .query('customer')
-      .withIndex('by_clerkId', (q) => q.eq('clerkId', args.clerkId))
-      .first();
-
-    if (existing) {
-      await ctx.db.patch(existing._id, {
-        name: args.name,
-        email: args.email,
-      });
-      return await ctx.db.get(existing._id);
-    } else {
-      const id = await ctx.db.insert('customer', {
-        name: args.name,
-        email: args.email,
-        clerkId: args.clerkId,
-        createdAt: args.createdAt,
-      });
-      return await ctx.db.get(id);
-    }
-  },
-});
+export const upsertCustomerClient = async (payload: any) => {
+  const { $convex } = useNuxtApp();
+  // The generated client API may not exist until Convex artifacts are generated on CI.
+  // Cast to any to avoid build-time type errors; after running `npx convex build` the proper types will be available.
+  return await $convex.mutation(
+    (api as any).customers.upsertCustomer,
+    payload as any,
+  );
+};

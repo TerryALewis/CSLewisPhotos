@@ -241,10 +241,7 @@
             </SignUpButton>
           </div>
           <div class="mt-4 text-right">
-            <button
-              @click="showAuthModal = false"
-              class="text-sm text-gray-600"
-            >
+            <button @click="cancelAuthModal" class="text-sm text-gray-600">
               Cancel
             </button>
           </div>
@@ -291,6 +288,30 @@ const open = ref(false);
 const isProcessingCheckout = ref(false);
 const checkoutError = ref('');
 const showAuthModal = ref(false);
+
+// persisted intent key so checkout continues after auth redirect/refresh
+const checkoutAfterSignInKey = 'checkoutAfterSignIn';
+const setCheckoutIntent = () => {
+  try {
+    sessionStorage.setItem(checkoutAfterSignInKey, '1');
+  } catch (e) {
+    /* ignore */
+  }
+};
+const clearCheckoutIntent = () => {
+  try {
+    sessionStorage.removeItem(checkoutAfterSignInKey);
+  } catch (e) {
+    /* ignore */
+  }
+};
+const hasCheckoutIntent = () => {
+  try {
+    return sessionStorage.getItem(checkoutAfterSignInKey) === '1';
+  } catch (e) {
+    return false;
+  }
+};
 
 // Access Clerk auth state (client-only)
 const { isLoaded, isSignedIn } = process.client
@@ -355,22 +376,36 @@ const handleCheckout = async () => {
 
   // If user is signed in, proceed
   if (process.client && isSignedIn && isSignedIn.value) {
+    // clear any lingering intent
+    clearCheckoutIntent();
     await proceedToCheckout();
     return;
   }
 
-  // Otherwise show auth modal and wait for sign-in
+  // Otherwise show auth modal and remember intent so we can continue after sign-in
   showAuthModal.value = true;
+  setCheckoutIntent();
 };
 
-// When the user signs in (isSignedIn becomes true) and the auth modal is visible, continue to checkout
+// When the user signs in (isSignedIn becomes true) and the auth modal was requested, continue to checkout
 watch(isSignedIn, async (signed) => {
-  if (process.client && signed && showAuthModal.value) {
+  if (
+    process.client &&
+    signed &&
+    (showAuthModal.value || hasCheckoutIntent())
+  ) {
     showAuthModal.value = false;
+    clearCheckoutIntent();
     // small delay to let Clerk finalize session
     setTimeout(() => proceedToCheckout(), 250);
   }
 });
+
+// Cancel handler for auth modal
+const cancelAuthModal = () => {
+  showAuthModal.value = false;
+  clearCheckoutIntent();
+};
 
 const changeCartItemQty = async (itemIdx, qty) => {
   console.log('entered changeCartItemQty method');

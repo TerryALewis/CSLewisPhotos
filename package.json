@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "convex:gen": "npx convex build",
+    "prebuild": "npm run convex:gen",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
